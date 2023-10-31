@@ -9,17 +9,16 @@ const Searchbar = () => {
 
     const inputHandler = (e: ChangeEvent<HTMLInputElement>) => {
         setUsername(e.target.value)
-        console.log(username)
     }
 
     const searchOnclick = () => {
-        router.push(`/visualize?username=${username}`) 
+        router.push(`/visualize?username=${username}`)  // pass the username as a query
     }
 
     return (
         <>
-            <input type='text' placeholder= "Enter a username..."  onChange={inputHandler}/>
-            <button onClick = {searchOnclick}> Search </button>
+            <input type='text' placeholder="Enter a username..."  onChange={inputHandler}/>
+            <button onClick={searchOnclick}> Search </button>
         </>
     )
 }
