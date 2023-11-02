@@ -10,14 +10,20 @@ const VisualizePage = () => {
     const searchParams = useSearchParams()
     const username:string = searchParams.get("username") ? searchParams.get("username") as string : "" // null check
     //const [userInfo, setUserInfo] = useState<>()
-    
-    // fetcher for last fm endpoint https://ws.audioscrobbler.com/2.0/
-    const userFetcher = async ([url, user]:string[]) => 
-        await fetch(`${url}&user=${user}&api_key=${process.env.LFM_API}&format=json`)
-            .then((res) => res.json())
-    
+        
+    // fetchers for my API
+    const userInfoFetcher = async (url: string) => {
+        const res = await fetch(url)
+        if (!res.ok) {
+            throw Error("Request unsuccessful")
+        }
+        const data = await res.json()
+        return data
+    }
 
-    const { data, error, isLoading } = useSWR([`${url}?method=user.getinfo`, username], userFetcher)
+    const { data, error, isLoading } = useSWR(`/api/users/getInfo/${username}`, userInfoFetcher)
+
+    // end data retrieval
 
     // useEffect(() => {
     //     console.log(username)
