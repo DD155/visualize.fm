@@ -22,7 +22,7 @@ const VisualizePage = () => {
     })
         
     // fetchers for my API
-    const userInfoFetcher = async (url: string) => {
+    const fetcher = async (url: string) => {
         const res = await fetch(url)
         if (!res.ok) {
             throw Error("Request unsuccessful")
@@ -31,7 +31,7 @@ const VisualizePage = () => {
         return data
     }
 
-    const { data: userInfoData, error, isLoading } = useSWR(`/api/users/getInfo/${username}`, userInfoFetcher)
+    const { data: userInfoData, error, isLoading } = useSWR(`/api/users/getInfo/${username}`, fetcher)
 
     useEffect(() => {
         if(userInfoData)
