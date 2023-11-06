@@ -17,8 +17,11 @@ const Searchbar = () => {
 
     return (
         <>
-            <input type='text' placeholder="Enter a username..."  onChange={inputHandler}/>
-            <button onClick={searchOnclick}> Search </button>
+            <div className='h-12'>
+                <input className='p-2 w-1/4 h-full' type='text' placeholder="Enter a username..."  onChange={inputHandler}/>
+                <button className='p-2 text-s h-full  bg-red-900  text-white' onClick={searchOnclick}> Search </button>
+            </div>
+            
         </>
     )
 }
