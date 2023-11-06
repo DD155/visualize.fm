@@ -18,8 +18,12 @@ const Searchbar = () => {
     return (
         <>
             <div className='h-12'>
-                <input className='p-2 w-1/4 h-full' type='text' placeholder="Enter a username..."  onChange={inputHandler}/>
-                <button className='p-2 text-s h-full  bg-red-900  text-white' onClick={searchOnclick}> Search </button>
+                <input className='p-2 w-1/4 h-full' 
+                    type='text' placeholder="Enter a username..."  onChange={inputHandler}/>
+                <button 
+                    className='hover:bg-red p-2 text-s h-full bg-main-red text-white'
+                    onClick={searchOnclick}> Search 
+                </button>
             </div>
             
         </>

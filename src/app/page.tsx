@@ -6,7 +6,7 @@ export default function Home() {
     <>
         <div className='h-screen mt-8 bg-slate-950'>
             <div className='text-center'>
-                <span className='text-6xl text-white'> visualize.</span><span className = 'text-6xl text-red-800'>fm</span>
+                <span className='text-6xl text-white'> visualize.</span><span className = 'text-6xl text-main-red'>fm</span>
             </div>
             <div className='mt-36 text-center'>
                 <Searchbar />
