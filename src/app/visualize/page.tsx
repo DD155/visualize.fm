@@ -1,16 +1,12 @@
 'use client'
 
 import useSWR from 'swr'
+import useSWRImmutable from 'swr/immutable'
+
 import { userInfo } from 'types/userTypes'
 import { useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import Image from 'next/image'
-
-// interface userInfo {
-//     username: string,
-//     numArtists: number,
-//     profilePic: string,
-// }
 
 const VisualizePage = () => {
     const searchParams = useSearchParams()
@@ -31,24 +27,24 @@ const VisualizePage = () => {
         return data
     }
 
-    const { data: userInfoData, error, isLoading } = useSWR(`/api/users/getInfo/${username}`, fetcher)
+    // Get the user data using SWR and make sure it doesn't revalidate + when error received
+    const { data: userInfoData, error, isLoading } = useSWRImmutable(`/api/users/getInfo/${username}`, fetcher, {
+        onErrorRetry: (err) => {
+            if (err.status === 500) 
+                return
+        }
+    })
 
     useEffect(() => {
-        if(userInfoData)
+        console.log(userInfoData, error)
+        if(userInfoData) {
             setUserInfo({
                 username: userInfoData.user.name, 
                 numArtists: userInfoData.user.artist_count,
                 profilePic: userInfoData.user.image[3]['#text']
             })
+        }
     }, [userInfoData])
-
-    if (error) {
-        return (<>
-        <div className='h-screen flex justify-center items-center'>
-            <p className='text-white text-4xl'> Couldn't retrieve data...</p>
-        </div>
-        </>)
-    }
 
     if (isLoading) {
         return (
@@ -60,8 +56,16 @@ const VisualizePage = () => {
             </svg>
         </div>
         )    
-
     }
+
+    if (error) {
+        return (<>
+        <div className='h-screen flex justify-center items-center'>
+            <span className='text-main-red text-4xl'>Error:&nbsp;</span><span className='text-white text-4xl'>User not found...</span>
+        </div>
+        </>)
+    }
+
 
     return <>
         {userInfo.profilePic && 
@@ -73,7 +77,6 @@ const VisualizePage = () => {
         /> }
         <p> Username: {userInfo.username}</p>
         <p> Total artists: {userInfo.numArtists} </p>
-
     </>
 }
 

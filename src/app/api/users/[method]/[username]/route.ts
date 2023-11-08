@@ -10,9 +10,19 @@ export const GET = async (request:Request) => {
 
     const method = request.url.slice(secondToLastSlash + 1, lastIndexOfSlash) // Get the API method from the url  
     const username = request.url.slice(request.url.lastIndexOf('/') + 1) // Get the username from the url  
-    const res = await fetch(`${url}?method=user.${method}&user=${username}&api_key=${API_KEY}&format=json`)
 
-    const data = await res.json()
-
-    return data ? NextResponse.json(data) : NextResponse.json({"message": "User API request has failed"})
+    try {
+        const res = await fetch(`${url}?method=user.${method}&user=${username}&api_key=${API_KEY}&format=json`)
+        const data = await res.json()
+        if (!("error" in data))
+            return NextResponse.json(data)
+        else 
+            throw Error 
+    } catch (error) {
+        return new Response(null, {
+            status: 500,
+            statusText: 'User API request has failed'
+        })
+    }
+    //return data ? NextResponse.json(data) : NextResponse.json({"message": "User API request has failed"})
 }
