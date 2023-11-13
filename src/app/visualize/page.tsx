@@ -8,6 +8,10 @@ import { useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import Image from 'next/image'
 
+const colorFade = (startColor:string, endColor:string) => {
+    return `transition ease-in delay-100 ${startColor} hover:${endColor} duration-200`
+}
+
 const VisualizePage = () => {
     const searchParams = useSearchParams()
     const username:string = searchParams.get("username") ? searchParams.get("username") as string : "" // null check
@@ -16,7 +20,7 @@ const VisualizePage = () => {
         numArtists: 0,
         profilePic: ""
     })
-        
+
     // fetchers for my API
     const fetcher = async (url: string) => {
         const res = await fetch(url)
@@ -48,7 +52,7 @@ const VisualizePage = () => {
 
     if (isLoading) {
         return (
-        <div className='h-screen flex justify-center items-center'>
+        <div className='h-screen flex justify-center items-center '>
             <p className='animate-text bg-gradient-to-r from-white via-red-200 to-main-red bg-clip-text text-transparent  text-4xl'> Visualizing your music... </p>
             <svg className="animate-spin ml-3 mr-3 h-8 w-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -67,7 +71,23 @@ const VisualizePage = () => {
     }
 
 
-    return <>
+    return (
+        <div className='h-screen flex justify-center items-center'>
+            <p className='text-center text-white text-3xl'> 
+                <span className='animate-fade'>
+                    Welcome <span className='text-main-red'>{userInfo.username}</span>, to your personalized 
+                    <span className='animate-text bg-gradient-to-r from-white via-red-200 to-main-red bg-clip-text text-transparent'> Visualization </span>
+                </span>
+                <br /> <br />
+                <span className='opacity-0 animate-fade fill-forwards animation-delay-[2000ms]'>
+                    Continue to your <span className={`${colorFade("text-white", "text-main-red")} underline underline-offset-6`}>Summary</span>
+                    &nbsp;or check out your&nbsp; 
+                    <span className={`transition ease-in delay-100 text-white hover:text-main-red duration-200 underline underline-offset-6`}>Dashboard</span>
+                </span>
+            </p>
+        </div>
+    )
+    {/*}
         {userInfo.profilePic && 
         <Image 
             src={userInfo.profilePic} 
@@ -78,6 +98,7 @@ const VisualizePage = () => {
         <p> Username: {userInfo.username}</p>
         <p> Total artists: {userInfo.numArtists} </p>
     </>
+    */}
 }
 
 export default VisualizePage

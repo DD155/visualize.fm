@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss'
+const plugin = require('tailwindcss/plugin')
 
 const config: Config = {
   content: [
@@ -10,6 +11,7 @@ const config: Config = {
     extend: {
         animation: {
             text: 'text 2.5s ease infinite',
+            fade: 'fadeIn 3s ease-in',
           },
           keyframes: {
             text: {
@@ -21,6 +23,10 @@ const config: Config = {
                 'background-size': '200% 200%',
                 'background-position': 'right center',
               },
+            },
+            fadeIn: {
+                '0%': { 'opacity': '0'},
+                '100%': {'opacity': '100'},
             },
         },
         backgroundImage: {
@@ -34,6 +40,21 @@ const config: Config = {
         },
     },
   },
-  plugins: [],
+  plugins: [
+    plugin(({ matchUtilities, theme }: { matchUtilities : any, theme : any }) => {
+        matchUtilities(
+          {
+            "animation-delay": (value:string) => {
+              return {
+                "animation-delay": value,
+              };
+            },
+          },
+          {
+            values: theme("transitionDelay"),
+          }
+        );
+      }),
+  ],
 }
 export default config
