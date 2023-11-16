@@ -9,14 +9,11 @@ import { useEffect, useState } from "react"
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 
-const colorFade = (startColor:string, endColor:string) => {
-    return `transition ease-in delay-100 ${startColor} hover:${endColor} duration-200`
-}
 
-const VisualizePage = () => {
+const VisualizePage = ({params} : {params: {username: string}}) => {
     const router = useRouter()
-    const searchParams = useSearchParams()
-    const username:string = searchParams.get("username") ? searchParams.get("username") as string : "" // null check
+    //const searchParams = useSearchParams()
+    const username:string = params.username ? params.username : "" // null check
 
     const [isSummarySelected, setIsSummarySelected] = useState<boolean>(false)
     const [userInfo, setUserInfo] = useState<userInfo>({
@@ -43,9 +40,8 @@ const VisualizePage = () => {
         }
     })
 
-    const transitionToSummary = () => {
-
-    }
+    // styles 
+    const colorFade = "transition ease-in delay-100 text-white hover:text-main-red duration-200 underline underline-offset-6 cursor-pointer"
 
     useEffect(() => {
         console.log(userInfoData, error)
@@ -89,26 +85,13 @@ const VisualizePage = () => {
                 </span>
                 <br /> <br />
                 <span className='opacity-0 animate-fade fill-forwards animation-delay-[2000ms]'>
-                    Continue to your <span onClick = {() => router.push(`/summary/?username=${username}`)} className={`${colorFade("text-white", "text-main-red")} underline underline-offset-6 cursor-pointer`}>Summary</span>
+                    Continue to your <span onClick = {() => router.push(`/summary/${username}`)} className={colorFade}>Summary</span>
                     &nbsp;or check out your&nbsp; 
-                    <span onClick = {() => router.push(`/dashboard/?username=${username}`)} className={`${colorFade("text-white", "text-main-red")} underline underline-offset-6 cursor-pointer`}>Dashboard</span>
+                    <span onClick = {() => router.push(`/dashboard/${username}`)} className={colorFade}>Dashboard</span>
                 </span>
             </p>
-        
         </div>
     )
-    {/*}
-        {userInfo.profilePic && 
-        <Image 
-            src={userInfo.profilePic} 
-            alt ="Profile picture"
-            width={150}
-            height={150}
-        /> }
-        <p> Username: {userInfo.username}</p>
-        <p> Total artists: {userInfo.numArtists} </p>
-    </>
-    */}
 }
 
 export default VisualizePage

@@ -15,7 +15,7 @@ const Searchbar = () => {
     const searchOnclick = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         if (username.length > 1 && username.length < 16)
-            router.push(`/visualize?username=${username}`)  // pass the username as a query
+            router.push(`/visualize/${username}`)  // pass the username as a query
         else
             setIsValidUsername(false)
     }
