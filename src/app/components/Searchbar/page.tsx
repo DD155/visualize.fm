@@ -27,11 +27,9 @@ const Searchbar = () => {
                     <input className='p-2 w-full h-full grow-2 rounded-l-lg focus:outline-none' 
                         type='text' placeholder="Enter a username..."  onChange={inputHandler}/>
                     
-                    
                     <button 
                         type='submit'
                         className='m-auto bg-no-repeat bg-center bg-[url("/search.svg")] hover:bg-red-800 p-2 text-s w-1/6 h-full bg-main-red text-white rounded-r-lg'> 
-                         
                     </button>
                     
                     {/*
