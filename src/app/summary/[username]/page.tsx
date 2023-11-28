@@ -1,13 +1,13 @@
 'use client'
 
+import PageButton from "@components/PageButton/page"
+import React from "react"
 import { ReactElement, useState } from "react"
 
 const Summary = () => {
     const [currentPage, setCurrentPage] = useState<number>(0)
-
-    const clickForwardPage = () => {
-        currentPage < 4 && setCurrentPage(currentPage + 1)
-    }
+    const NUM_PAGES = 5
+    const pgArr:number[] = Array.from({length: NUM_PAGES}, (_, i) => i) // create an array of size NUM_PAGES, from 1 to 5
 
     const renderPage = (page:number): ReactElement | null => {
         switch (page) {
@@ -62,8 +62,6 @@ const Summary = () => {
         return ''
     }
 
-    const pageButtonStyle = 'm-auto bg-no-repeat bg-center w-1/2 h-1/3'
-
     return (
         <div className='grid h-screen grid-cols-7 grid-rows-7'>
             {/* Left side for previous button */}
@@ -84,11 +82,10 @@ const Summary = () => {
             {/* Bottom side for page navigation */}
             <div className = 'col-start-2 col-end-7 row-start-6 row-end-7 text-white'>
                 <div className='pl-72 pr-72 grid grid-cols-5 h-full justify-center'>
-                    <button className={pageButtonStyle + ' bg-[url("/pageNumbers/page1.svg")]'} onClick = {() => setCurrentPage(0)}></button>
-                    <button className={pageButtonStyle + ' bg-[url("/pageNumbers/page2.svg")]'} onClick = {() => setCurrentPage(1)}></button>
-                    <button className={pageButtonStyle + ' bg-[url("/pageNumbers/page3.svg")]'} onClick = {() => setCurrentPage(2)}></button>
-                    <button className={pageButtonStyle + ' bg-[url("/pageNumbers/page4.svg")]'} onClick = {() => setCurrentPage(3)}></button>
-                    <button className={pageButtonStyle + ' bg-[url("/pageNumbers/page5.svg")]'} onClick = {() => setCurrentPage(4)}></button>
+                    { /* Create the page buttons dynamically */
+                    pgArr.map(i => 
+                        <PageButton key={i} onClickFunction={() => setCurrentPage(i)} selectedPage={currentPage} current={i}/>
+                    ) } 
                 </div>
             </div>
         </div>
