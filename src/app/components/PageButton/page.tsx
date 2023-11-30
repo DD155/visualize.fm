@@ -14,23 +14,21 @@ const PageButton = ({current, selectedPage, onClickFunction}: PageProps) => {
     ]
 
     const strokeColor:string = selectedPage === current ? "#d51007" : "#ffffff"
-    const btnStyle:string = "m-auto w-1/3 h-1/3 min-w-[33%] cursor-pointer"
+    const btnStyle:string = "m-auto w-1/3 h-1/3 cursor-pointer hover:stroke-main-red"
     
     return current === 3 ?
-    (
         <svg onClick = {onClickFunction} xmlns="http://www.w3.org/2000/svg" className={btnStyle} viewBox="0 0 24 24" strokeWidth="1.75" stroke={strokeColor} fill="none" strokeLinecap="round" strokeLinejoin="round">
             <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
             <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
             <path d={pathData[current]}/>
             <path d="M14 8v8" />
         </svg>
-    )
-    :
-    <svg onClick = {onClickFunction} xmlns="http://www.w3.org/2000/svg" className={btnStyle} viewBox="0 0 24 24" strokeWidth="1.75" stroke={strokeColor} fill="none" strokeLinecap="round" strokeLinejoin="round">
-            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-            <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
-            <path d={pathData[current]}/>
-    </svg>
+        :
+        <svg onClick = {onClickFunction} xmlns="http://www.w3.org/2000/svg" className={btnStyle} viewBox="0 0 24 24" strokeWidth="1.75" stroke={strokeColor} fill="none" strokeLinecap="round" strokeLinejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+                <path d={pathData[current]}/>
+        </svg>
 }
 
 export default PageButton

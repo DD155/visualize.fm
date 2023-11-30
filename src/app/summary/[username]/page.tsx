@@ -6,15 +6,18 @@ import { ReactElement, useState } from "react"
 
 const Summary = () => {
     const [currentPage, setCurrentPage] = useState<number>(0)
+    const [currentTimeframe, setCurrentTimeframe] = useState<string>("Week")
+
     const NUM_PAGES = 5
     const pgArr:number[] = Array.from({length: NUM_PAGES}, (_, i) => i) // create an array of size NUM_PAGES, from 1 to 5
 
+    // display content depending on the current page
     const renderPage = (page:number): ReactElement | null => {
         switch (page) {
             case 0: 
                 return (
                     <p className='text-2xl'>
-                    Grid Item 1
+                    As of this <span className='underline underline-offset-6 cursor-pointer' >{currentTimeframe}</span>, 
                     </p>
                 )
             case 1: 
@@ -44,22 +47,6 @@ const Summary = () => {
                 
             default: return <></>
         }
-    }
-
-    const switchPageButtonStyle = (pageNumber:number): string => {
-        switch (pageNumber) {
-            case 0: 
-                return 'm-auto bg-no-repeat bg-center bg-[url("/pageNumbers/page1.svg")] w-1/2 h-1/4'
-            case 1: 
-                return 'm-auto bg-no-repeat bg-center bg-[url("/pageNumbers/page2.svg")] w-1/2 h-1/4'
-            case 2: 
-                return 'm-auto bg-no-repeat bg-center bg-[url("/pageNumbers/page3.svg")] w-1/2 h-1/4'
-            case 3:
-                return  ''
-        }
-        
-        
-        return ''
     }
 
     return (
