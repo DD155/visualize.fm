@@ -1,12 +1,12 @@
 'use client'
 
-import PageButton from "@components/PageButton/page"
+import { PageButton } from "@components/PageButton/page"
 import React from "react"
 import { ReactElement, useState } from "react"
 
 const Summary = () => {
     const [currentPage, setCurrentPage] = useState<number>(0)
-    const [currentTimeframe, setCurrentTimeframe] = useState<string>("Week")
+    const [currentTimeframe, setCurrentTimeframe] = useState<string>("week")
 
     const NUM_PAGES = 5
     const pgArr:number[] = Array.from({length: NUM_PAGES}, (_, i) => i) // create an array of size NUM_PAGES, from 1 to 5
@@ -17,7 +17,15 @@ const Summary = () => {
             case 0: 
                 return (
                     <p className='text-2xl'>
-                    As of this <span className='underline underline-offset-6 cursor-pointer' >{currentTimeframe}</span>, 
+                    As of this 
+                    <select className='m-2 text-main-red bg-transparent border-0 border-b-2 border-main-red focus:outline-none focus:ring-0' value={currentTimeframe} onChange={e => setCurrentTimeframe(e.target.value)}>
+                        <option className='text-black' value='week'>Week</option>
+                        <option className='text-black' value='month'>Month</option>
+                        <option className='text-black' value='year'>Year</option>
+                    </select>
+                    {/*<span className='underline underline-offset-6 cursor-pointer' >{currentTimeframe}</span>*/}
+                    <br />
+                    
                     </p>
                 )
             case 1: 
@@ -52,8 +60,8 @@ const Summary = () => {
     return (
         <div className='grid h-screen grid-cols-7 grid-rows-7'>
             {/* Left side for previous button */}
-            <div className = 'flex items-center justify-center row-start-1 row-end-7 text-white'>
-                <button className='bg-no-repeat bg-center bg-[url("/previous.svg")] w-1/4 h-1/6' onClick = {() => currentPage > 0 && setCurrentPage(currentPage - 1)}> </button>
+            <div className = 'flex items-center justify-center row-start-1 row-end-7 text-white'>   
+                {  currentPage !== 0 && <button className='bg-no-repeat bg-center bg-[url("/previous.svg")] w-1/4 h-1/6' onClick = {() => currentPage > 0 && setCurrentPage(currentPage - 1)}> </button> }
             </div>
             
             {/* Actual content goes here */}
@@ -63,7 +71,7 @@ const Summary = () => {
             
             {/* Left side for next button */}
             <div className = 'flex items-center justify-center row-start-1 row-end-7 text-white'>
-            <button className='bg-no-repeat bg-center bg-[url("/forward.svg")] w-1/4 h-1/6' onClick = {() => currentPage < 4 && setCurrentPage(currentPage + 1)}></button>
+                { currentPage !== NUM_PAGES-1 && <button className='bg-no-repeat bg-center bg-[url("/forward.svg")] w-1/4 h-1/6' onClick = {() => currentPage < 4 && setCurrentPage(currentPage + 1)}></button> }
             </div>
             
             {/* Bottom side for page navigation */}

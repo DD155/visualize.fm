@@ -4,7 +4,7 @@ interface PageProps {
     onClickFunction: () => void
 }
 
-const PageButton = ({current, selectedPage, onClickFunction}: PageProps) => {
+export const PageButton = ({current, selectedPage, onClickFunction}: PageProps) => {
     const pathData:string[] = [
         "M10 10l2 -2v8",
         "M10 8h3a1 1 0 0 1 1 1v2a1 1 0 0 1 -1 1h-2a1 1 0 0 0 -1 1v2a1 1 0 0 0 1 1h3",
@@ -31,4 +31,4 @@ const PageButton = ({current, selectedPage, onClickFunction}: PageProps) => {
         </svg>
 }
 
-export default PageButton
+//export default PageButton

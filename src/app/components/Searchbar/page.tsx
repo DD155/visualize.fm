@@ -3,7 +3,7 @@
 import { useState, ChangeEvent } from 'react'
 import { useRouter } from 'next/navigation'
 
-const Searchbar = () => {
+export const Searchbar = () => {
     const router = useRouter()
     const [username, setUsername] = useState<string>("")
     const [isValidUsername, setIsValidUsername] = useState<boolean>(true)
@@ -52,5 +52,3 @@ const Searchbar = () => {
         </>
     )
 }
-
-export default Searchbar
