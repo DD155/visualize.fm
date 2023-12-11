@@ -3,13 +3,34 @@
 import { PageButton } from "@components/PageButton/page"
 import React from "react"
 import { ReactElement, useState } from "react"
+import useSWRImmutable from 'swr/immutable'
 
-const Summary = () => {
+
+const Summary = ({params} : {params: {username: string}}) => {
+    const username:string = params.username ? params.username : ""
+
     const [currentPage, setCurrentPage] = useState<number>(0)
     const [currentTimeframe, setCurrentTimeframe] = useState<string>("week")
 
     const NUM_PAGES = 5
     const pgArr:number[] = Array.from({length: NUM_PAGES}, (_, i) => i) // create an array of size NUM_PAGES, from 1 to 5
+    
+    const fetcher = async (url: string) => {
+        const res = await fetch(url)
+        if (!res.ok) {
+            throw Error("Request unsuccessful")
+        }
+        const data = await res.json()
+        return data
+    }
+
+    // Get the user data using SWR and make sure it doesn't revalidate + when error received
+    const { data: userInfoData, error, isLoading } = useSWRImmutable(`/api/users/getTopArtists/${username}/period=7day`, fetcher, {
+        onErrorRetry: (err) => {
+            if (err.status === 500) 
+                return
+        }
+    })
 
     // display content depending on the current page
     const renderPage = (page:number): ReactElement | null => {
@@ -19,9 +40,9 @@ const Summary = () => {
                     <p className='text-2xl'>
                     As of this 
                     <select className='m-2 text-main-red bg-transparent border-0 border-b-2 border-main-red focus:outline-none focus:ring-0' value={currentTimeframe} onChange={e => setCurrentTimeframe(e.target.value)}>
-                        <option className='text-black' value='week'>Week</option>
-                        <option className='text-black' value='month'>Month</option>
-                        <option className='text-black' value='year'>Year</option>
+                        <option className='text-black text-lg' value='week'>Week</option>
+                        <option className='text-black text-lg' value='month'>Month</option>
+                        <option className='text-black text-lg' value='year'>Year</option>
                     </select>
                     {/*<span className='underline underline-offset-6 cursor-pointer' >{currentTimeframe}</span>*/}
                     <br />
@@ -56,6 +77,8 @@ const Summary = () => {
             default: return <></>
         }
     }
+
+    //console.log(userInfoData)
 
     return (
         <div className='grid h-screen grid-cols-7 grid-rows-7'>
