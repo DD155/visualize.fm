@@ -1,53 +1,25 @@
 'use client'
 
+import { ArtistsArea } from "@components/ArtistsArea/page"
 import { PageButton } from "@components/PageButton/page"
 import React from "react"
 import { ReactElement, useState } from "react"
-import useSWRImmutable from 'swr/immutable'
-
 
 const Summary = ({params} : {params: {username: string}}) => {
     const username:string = params.username ? params.username : ""
 
     const [currentPage, setCurrentPage] = useState<number>(0)
-    const [currentTimeframe, setCurrentTimeframe] = useState<string>("week")
+    const [currentTimeframe, setCurrentTimeframe] = useState<string>("7day")
 
     const NUM_PAGES = 5
     const pgArr:number[] = Array.from({length: NUM_PAGES}, (_, i) => i) // create an array of size NUM_PAGES, from 1 to 5
     
-    const fetcher = async (url: string) => {
-        const res = await fetch(url)
-        if (!res.ok) {
-            throw Error("Request unsuccessful")
-        }
-        const data = await res.json()
-        return data
-    }
-
-    // Get the user data using SWR and make sure it doesn't revalidate + when error received
-    const { data: userInfoData, error, isLoading } = useSWRImmutable(`/api/users/getTopArtists/${username}/period=7day`, fetcher, {
-        onErrorRetry: (err) => {
-            if (err.status === 500) 
-                return
-        }
-    })
-
     // display content depending on the current page
     const renderPage = (page:number): ReactElement | null => {
         switch (page) {
             case 0: 
                 return (
-                    <p className='text-2xl'>
-                    As of this 
-                    <select className='m-2 text-main-red bg-transparent border-0 border-b-2 border-main-red focus:outline-none focus:ring-0' value={currentTimeframe} onChange={e => setCurrentTimeframe(e.target.value)}>
-                        <option className='text-black text-lg' value='week'>Week</option>
-                        <option className='text-black text-lg' value='month'>Month</option>
-                        <option className='text-black text-lg' value='year'>Year</option>
-                    </select>
-                    {/*<span className='underline underline-offset-6 cursor-pointer' >{currentTimeframe}</span>*/}
-                    <br />
-                    
-                    </p>
+                    <ArtistsArea username={username} timeframe={currentTimeframe}/>
                 )
             case 1: 
                 return (
@@ -77,9 +49,6 @@ const Summary = ({params} : {params: {username: string}}) => {
             default: return <></>
         }
     }
-
-    //console.log(userInfoData)
-
     return (
         <div className='grid h-screen grid-cols-7 grid-rows-7'>
             {/* Left side for previous button */}
@@ -89,6 +58,15 @@ const Summary = ({params} : {params: {username: string}}) => {
             
             {/* Actual content goes here */}
             <div className = 'border-solid border-2 border-white col-start-2 col-end-7 row-start-1 row-end-6 text-white p-10'>
+                <p className='text-2xl'>
+                    As of this 
+                    <select className='m-2 text-main-red bg-transparent border-0 border-b-2 border-main-red focus:outline-none focus:ring-0' value={currentTimeframe} onChange={e => setCurrentTimeframe(e.target.value)}>
+                        <option className='text-black text-lg' value='7day'>Week</option>
+                        <option className='text-black text-lg' value='1month'>Month</option>
+                        <option className='text-black text-lg' value='12month'>Year</option>
+                    </select>
+                    <br />
+                </p>
                 {renderPage(currentPage)}
             </div>
             
