@@ -3,7 +3,9 @@
 import { ArtistsArea } from "@components/ArtistsArea/page"
 import { PageButton } from "@components/PageButton/page"
 import React from "react"
+import * as d3 from "d3"
 import { ReactElement, useState } from "react"
+import { BarChart } from "@components/BarChart/page"
 
 const Summary = ({params} : {params: {username: string}}) => {
     const username:string = params.username ? params.username : ""
@@ -14,12 +16,20 @@ const Summary = ({params} : {params: {username: string}}) => {
     const NUM_PAGES = 5
     const pgArr:number[] = Array.from({length: NUM_PAGES}, (_, i) => i) // create an array of size NUM_PAGES, from 1 to 5
     
+    const dataArr:ArtistData[] = [
+        {name: "Test 1", plays: 20},
+        {name: "Test 2", plays: 27},
+        {name: "Test 3", plays: 14},
+        {name: "Test 4", plays: 8}
+    ]
+
     // display content depending on the current page
     const renderPage = (page:number): ReactElement | null => {
         switch (page) {
             case 0: 
                 return (
-                    <ArtistsArea username={username} timeframe={currentTimeframe}/>
+                    //<ArtistsArea username={username} timeframe={currentTimeframe}/>
+                    <BarChart data={dataArr}/>
                 )
             case 1: 
                 return (
