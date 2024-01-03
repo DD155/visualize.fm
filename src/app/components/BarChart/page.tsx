@@ -49,13 +49,13 @@ const AxisLeft = ({ scale }: AxisLeftProps) => {
 const Bars = ({ data, height, scaleX, scaleY }: BarsProps) => {
     return (
       <>
-        {data.map(({ name, plays }) => (
+        {data.map(({ name, playcount }) => (
           <rect
             key={`bar-${name}`}
             x={scaleX(name)}
-            y={scaleY(plays)}
+            y={scaleY(playcount)}
             width={scaleX.bandwidth()}
-            height={height - scaleY(plays)}
+            height={height - scaleY(playcount)}
             fill="red"
           />
         ))}
@@ -76,10 +76,9 @@ export const BarChart = ({ data }: BarChartProps) => {
 
     // create Y axis, this uses scaleLinear for linear spacing of steps from 0 to max plays
     const scaleY = scaleLinear()
-        .domain([0, Math.max(...data.map(({ plays }) => plays))])
+        .domain([0, Math.max(...data.map(({ playcount }) => playcount))])
         .range([height, 0])
       
-    console.log(width)
     return (
       <svg
         width={width + margin.left + margin.right}

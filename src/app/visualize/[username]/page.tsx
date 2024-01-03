@@ -4,10 +4,9 @@ import useSWR from 'swr'
 import useSWRImmutable from 'swr/immutable'
 
 import { userInfo } from 'types/userTypes'
-import { useSearchParams } from "next/navigation"
+import { fetcher } from "Utils" 
 import { useEffect, useState } from "react"
 import { useRouter } from 'next/navigation'
-import Image from 'next/image'
 
 
 const VisualizePage = ({params} : {params: {username: string}}) => {
@@ -21,16 +20,6 @@ const VisualizePage = ({params} : {params: {username: string}}) => {
         numArtists: 0,
         profilePic: ""
     })
-
-    // fetchers for my API
-    const fetcher = async (url: string) => {
-        const res = await fetch(url)
-        if (!res.ok) {
-            throw Error("Request unsuccessful")
-        }
-        const data = await res.json()
-        return data
-    }
 
     // Get the user data using SWR and make sure it doesn't revalidate + when error received
     const { data: userInfoData, error, isLoading } = useSWRImmutable(`/api/users/getInfo/${username}`, fetcher, {

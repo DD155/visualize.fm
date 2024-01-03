@@ -16,20 +16,19 @@ const Summary = ({params} : {params: {username: string}}) => {
     const NUM_PAGES = 5
     const pgArr:number[] = Array.from({length: NUM_PAGES}, (_, i) => i) // create an array of size NUM_PAGES, from 1 to 5
     
-    const dataArr:ArtistData[] = [
-        {name: "Test 1", plays: 20},
-        {name: "Test 2", plays: 27},
-        {name: "Test 3", plays: 14},
-        {name: "Test 4", plays: 8}
-    ]
+    // const dataArr:ArtistData[] = [
+    //     {name: "Test 1", plays: 20},
+    //     {name: "Test 2", plays: 27},
+    //     {name: "Test 3", plays: 14},
+    //     {name: "Test 4", plays: 8}
+    // ]
 
     // display content depending on the current page
     const renderPage = (page:number): ReactElement | null => {
         switch (page) {
             case 0: 
                 return (
-                    //<ArtistsArea username={username} timeframe={currentTimeframe}/>
-                    <BarChart data={dataArr}/>
+                    <ArtistsArea username={username} timeframe={currentTimeframe}/>
                 )
             case 1: 
                 return (
@@ -59,6 +58,7 @@ const Summary = ({params} : {params: {username: string}}) => {
             default: return <></>
         }
     }
+
     return (
         <div className='grid h-screen grid-cols-7 grid-rows-7'>
             {/* Left side for previous button */}

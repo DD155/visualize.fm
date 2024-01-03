@@ -2,7 +2,7 @@ import { getRequestsFromURL } from "Utils"
 import { NextResponse } from "next/server"
 
 const API_KEY = process.env.API_KEY as string
-const url = process.env.NEXT_PUBLIC_API_URL // https://ws.audioscrobbler.com/2.0/
+const url = process.env.NEXT_PUBLIC_API_URL as string // https://ws.audioscrobbler.com/2.0/
 // https://ws.audioscrobbler.com/2.0/?method=user.getinfo&user=rj&api_key=YOUR_API_KEY&format=json
 
 export const GET = async (request:Request) => { 
