@@ -7,7 +7,7 @@
   <br>
 </h1>
 
-<h4 align="center">A data visualization web application for [Last.fm](https://www.last.fm/) users to learn more about their listening habits. Created to learn more about Next.js and D3 </h4>
+<h4 align="center">A data visualization web application for <a href="https://www.last.fm/" target="_blank">Last.fm</a> users to learn more about their listening habits. Created to learn more about Next.js and D3 </h4>
 
 [Add Gif of Use Cases Later]
 
