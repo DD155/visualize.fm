@@ -3,9 +3,7 @@
 import { ArtistsArea } from "@components/ArtistsArea/page"
 import { PageButton } from "@components/PageButton/page"
 import React from "react"
-import * as d3 from "d3"
 import { ReactElement, useState } from "react"
-import { BarChart } from "@components/BarChart/page"
 
 const Summary = ({params} : {params: {username: string}}) => {
     const username:string = params.username ? params.username : ""
@@ -74,13 +72,14 @@ const Summary = ({params} : {params: {username: string}}) => {
                         <option className='text-black text-lg' value='7day'>Week</option>
                         <option className='text-black text-lg' value='1month'>Month</option>
                         <option className='text-black text-lg' value='12month'>Year</option>
+                        <option className='text-black text-lg' value='overall'>Overall</option>
                     </select>
                     <br />
                 </p>
                 {renderPage(currentPage)}
             </div>
             
-            {/* Left side for next button */}
+            {/* Right side for next button */}
             <div className = 'flex items-center justify-center row-start-1 row-end-7 text-white'>
                 { currentPage !== NUM_PAGES-1 && <button className='bg-no-repeat bg-center bg-[url("/forward.svg")] w-1/4 h-1/6' onClick = {() => currentPage < 4 && setCurrentPage(currentPage + 1)}></button> }
             </div>

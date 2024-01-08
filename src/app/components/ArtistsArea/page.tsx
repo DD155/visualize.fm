@@ -2,7 +2,6 @@ import { BarChart } from "@components/BarChart/page"
 import { fetcher } from "Utils" 
 import { useEffect, useState } from "react"
 import useSWR from "swr"
-import useSWRImmutable from "swr/immutable"
 
 interface ArtistsAreaProps {
     username: string,
