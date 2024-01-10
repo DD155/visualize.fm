@@ -14,19 +14,14 @@ const Summary = ({params} : {params: {username: string}}) => {
     const NUM_PAGES = 5
     const pgArr:number[] = Array.from({length: NUM_PAGES}, (_, i) => i) // create an array of size NUM_PAGES, from 1 to 5
     
-    // const dataArr:ArtistData[] = [
-    //     {name: "Test 1", plays: 20},
-    //     {name: "Test 2", plays: 27},
-    //     {name: "Test 3", plays: 14},
-    //     {name: "Test 4", plays: 8}
-    // ]
-
     // display content depending on the current page
     const renderPage = (page:number): ReactElement | null => {
         switch (page) {
             case 0: 
-                return (
-                    <ArtistsArea username={username} timeframe={currentTimeframe}/>
+                 return (
+                    <p className='text-2xl'>
+                    Grid Item 2
+                    </p>   
                 )
             case 1: 
                 return (
