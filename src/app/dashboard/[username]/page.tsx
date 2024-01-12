@@ -91,39 +91,39 @@ const Dashboard = ({params} : {params: {username: string}}) => {
         const artistURL = recentTrack.url.substring(0, recentTrack.url.lastIndexOf("/") - 1)
 
         return (
-            <div className='grid h-screen grid-rows-6 grid-flow-col'>
+            <div className='mt-4 grid h-screen grid-rows-6 grid-flow-col'>
                 { /* Profile Header */}
                 <div className='p-2 row-span-1 border-solid border-2'>
                     <div className='grid h-full gap-4 grid-cols-12'> 
-                        <div className='col-start-2 col-end-4 border-solid border-2 flex justify-center'>
+                        <div className='col-start-2 col-end-4 border-solid border-2 flex justify-end'>
                             <div className='h-full w-1/2 relative'>
                                 <Image
                                     src={userInfo.profilePic ? userInfo.profilePic : defaultProfilePic}
                                     alt='Profile Picture'
                                     fill
-                                    className='rounded-full'
+                                    
                                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                 />
                             </div>
                             
                         </div>
                         <div className='col-span-4 border-solid border-2'>
-                            <p className='h-full text-white text-4xl flex items-center'> {userInfo.username}</p>
+                            <p className='font-bold h-full text-white text-4xl flex items-end'> {userInfo.username}</p>
                         </div>
                         <div className='col-start-8 col-span-4 border-solid border-2 text-sm text-white'>
                             <div className='h-full grid grid-cols-3'>
-                                <div className='flex justify-end col-span-2'> 
-                                    <p className='p-2 mr-2'> 
-                                        <span className='float-right'> {isNowPlaying ? "Currently Listening To..." : 'Last Listened To...'}  </span> <br/> 
-                                        <a href={recentTrack.url} className='hover:underline font-bold text-lg text-main-red float-right'>{trimString(30, recentTrack.title)} </a> <br/>
-                                        <a href={artistURL} className='hover:underline text-md text-main-red float-right'>{trimString(30, recentTrack.artist)} </a> 
-                                    </p>
+                                <div className='flex justify-end col-span-2'>
+                                    <div className='mr-3 h-full grid grid-rows-3'>
+                                        <span className='mt-auto ml-auto row-span-1'> {isNowPlaying ? "Currently Listening To..." : 'Last Listened To...'}  </span>
+                                        <a href={recentTrack.url} className='mt-auto ml-auto row-span-1 h-fit hover:underline font-bold text-lg text-main-red float-right'>{trimString(30, recentTrack.title)} </a> 
+                                        <a href={artistURL} className='ml-auto hover:underline text-md text-main-red'>{trimString(30, recentTrack.artist)}  </a>
+                                    </div> 
                                 </div>
                                 <div className='col-span-1'>
-                                    <div className='h-full w-2/3 relative '>
+                                    <div className='h-full w-2/3 relative'>
                                         <Image
                                             src={recentTrack.image ? recentTrack.image : defaultSongPic}
-                                            alt='Profile Picture'
+                                            alt='Track Picture'
                                             fill
                                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                         />

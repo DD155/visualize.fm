@@ -64,7 +64,7 @@ const Bars = ({ data, height, scaleX, scaleY }: BarsProps) => {
 }
   
 export const BarChart = ({ data }: BarChartProps) => {
-    const margin = { top: 10, right: 0, bottom: 20, left: 35 }
+    const margin = { top: 10, right: 0, bottom: 20, left: 45 }
     const width = 500 - margin.left - margin.right
     const height = 288 - margin.top - margin.bottom
     
