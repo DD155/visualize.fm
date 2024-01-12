@@ -64,9 +64,9 @@ const Bars = ({ data, height, scaleX, scaleY }: BarsProps) => {
 }
   
 export const BarChart = ({ data }: BarChartProps) => {
-    const margin = { top: 10, right: 0, bottom: 25, left: 30 }
+    const margin = { top: 10, right: 0, bottom: 20, left: 35 }
     const width = 500 - margin.left - margin.right
-    const height = 300 - margin.top - margin.bottom
+    const height = 288 - margin.top - margin.bottom
     
     // create X axis, use scaleBand for even distribution of artist names. add padding for space b/w bars
     const scaleX = scaleBand()

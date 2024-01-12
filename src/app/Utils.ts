@@ -21,3 +21,7 @@ export const getRequestsFromURL = (url:string, category:string) => {
 
     return requests
 }
+
+export const trimString = (max:number, str:string) => {
+    return str.length > max ? `${str.substring(0, max-3)}...` : str
+}
