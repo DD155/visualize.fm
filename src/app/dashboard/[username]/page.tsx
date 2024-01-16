@@ -137,9 +137,9 @@ const Dashboard = ({params} : {params: {username: string}}) => {
                 </div>
                 {/* Graph area */}
                 <div className='row-span-5 p-4'>
-                    <div className='grid gap-5 grid-cols-2'> 
-                        <div className='col-span-1 border-solid border-2 rounded-lg flex items-center justify-center text-white ml-12 mr-12'> 
-                            <div className='mt-5 mb-5 ml-6'>
+                    <div className='grid gap-5 grid-cols-1 justify center m-auto'> 
+                        <div className='col-span-1 flex items-center justify-center text-white ml-12 mr-12'> 
+                            <div className='border-solid border-2 rounded-lg p-6'>
                                 <div className='flex items-center justify-center mb-2 text-xs'> 
                                     <div>
                                         <button onClick={() => setCurrentTimeframe('7day')} className={getTimeframeButtonStyle('7day') + ' rounded-l-md'}>Week</button>
@@ -148,14 +148,11 @@ const Dashboard = ({params} : {params: {username: string}}) => {
                                         <button onClick={() => setCurrentTimeframe('overall')} className={getTimeframeButtonStyle('overall') + ' rounded-r-md'}>Overall</button>
                                     </div>
                             </div>
-                            <span className='flex items-center justify-center'> Top Artists </span>
+                            <span className='flex items-center justify-center '> Top Artists </span>
                             {/* Timeframe Selection */}
                             
-                                <ArtistsArea username={username} timeframe={currentTimeframe}/> 
+                                <ArtistsArea width={800} height={288} username={username} timeframe={currentTimeframe}/> 
                             </div>
-                        </div>
-                        <div className='col-span-1 border-solid border-2 flex items-center justify-center text-white'> 
-                            <ArtistsArea username={username} timeframe={currentTimeframe}/> 
                         </div>
                     </div>
                 </div>
