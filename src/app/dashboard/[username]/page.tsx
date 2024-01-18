@@ -101,11 +101,9 @@ const Dashboard = ({params} : {params: {username: string}}) => {
                                     src={userInfo.profilePic ? userInfo.profilePic : defaultProfilePic}
                                     alt='Profile Picture'
                                     fill
-                                    
                                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                 />
                             </div>
-                            
                         </div>
                         <div className='col-span-4 border-solid border-2'>
                             <p className='font-bold h-full text-white text-4xl flex items-end'> {userInfo.username}</p>

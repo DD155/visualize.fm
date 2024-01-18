@@ -20,6 +20,7 @@ export const ArtistsArea = ({username, timeframe, height, width} : ArtistsAreaPr
     })
 
     if (isLoading) {
+        // safelisted classes
         const widthStyle = `w-[${width}px]`
         const heightStyle = `h-[${height}px]`
 
