@@ -86,7 +86,7 @@ export const BarChart = ({ data, width, height }: BarChartProps) => {
                 y={scaleY(name)}
                 width={ scaleX(playcount) }
                 height={scaleY.bandwidth()}
-                fill="red"
+                fill="#d51007"
                 onMouseOver={() => {
                     setHoveredPlays(playcount)
                     setIsHovered(true)

@@ -7,6 +7,7 @@ import { useEffect, useState } from "react"
 import { fetcher, trimString } from "Utils"
 import { track, userInfo } from 'types/userTypes'
 import { ArtistsArea } from "@components/ArtistsArea/page"
+import { ArtistFreqHistogram } from "@components/ArtistFreqHistogram/page"
 
 const Dashboard = ({params} : {params: {username: string}}) => {
     const [currentTimeframe, setCurrentTimeframe] = useState<string>("7day")
@@ -68,8 +69,6 @@ const Dashboard = ({params} : {params: {username: string}}) => {
                 image: track.image[3]['#text']
             })
             track['@attr'] && setIsNowPLaying(track['@attr'].nowplaying)
-
-            //console.log(track['@attr'].nowplaying)
         }
     }, [userInfoData, userTrackData])
 
@@ -113,7 +112,7 @@ const Dashboard = ({params} : {params: {username: string}}) => {
                                 <div className='flex justify-end col-span-2'>
                                     <div className='mr-3 h-full grid grid-rows-3'>
                                         <span className='mt-auto ml-auto row-span-1'> {isNowPlaying ? "Currently Listening To..." : 'Last Listened To...'}  </span>
-                                        <a href={recentTrack.url} className='mt-auto ml-auto row-span-1 h-fit hover:underline font-bold text-lg text-main-red float-right'>{trimString(30, recentTrack.title)} </a> 
+                                        <a href={recentTrack.url} className='mt-auto ml-auto row-span-1 h-fit hover:underline font-bold text-lg text-main-red float-right'>{trimString(25, recentTrack.title)} </a> 
                                         <a href={artistURL} className='ml-auto hover:underline text-md text-main-red'>{trimString(30, recentTrack.artist)}  </a>
                                     </div> 
                                 </div>
@@ -128,8 +127,6 @@ const Dashboard = ({params} : {params: {username: string}}) => {
                                     </div>
                                 </div>
                             </div>
-                            
-                            
                         </div>
                     </div>
                 </div>
@@ -137,6 +134,7 @@ const Dashboard = ({params} : {params: {username: string}}) => {
                 <div className='row-span-5 p-4'>
                     <div className='grid gap-5 grid-cols-1 justify center m-auto'> 
                         <div className='col-span-1 flex items-center justify-center text-white ml-12 mr-12'> 
+                            {/* Timeframe Selection */}
                             <div className='border-solid border-2 rounded-lg p-6'>
                                 <div className='flex items-center justify-center mb-2 text-xs'> 
                                     <div>
@@ -145,13 +143,14 @@ const Dashboard = ({params} : {params: {username: string}}) => {
                                         <button onClick={() => setCurrentTimeframe('12month')} className={getTimeframeButtonStyle('12month')}>Year</button>
                                         <button onClick={() => setCurrentTimeframe('overall')} className={getTimeframeButtonStyle('overall') + ' rounded-r-md'}>Overall</button>
                                     </div>
-                            </div>
-                            <span className='flex items-center justify-center '> Top Artists </span>
-                            {/* Timeframe Selection */}
-                            
+                                </div>
+                                <span className='flex items-center justify-center '> Top Artists </span>
                                 <ArtistsArea width={800} height={288} username={username} timeframe={currentTimeframe}/> 
                             </div>
                         </div>
+                        <div className='col-span-1 flex items-center justify-center text-white ml-12 mr-12'>
+                            <ArtistFreqHistogram username={username} artist={'Ghost Data'} />
+                        </div>  
                     </div>
                 </div>
                 
