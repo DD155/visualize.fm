@@ -1,3 +1,6 @@
+
+import useSWR from "swr"
+
 // Fetcher function to be used with SWR calls
 export const fetcher = async (url: string) => {
     const res = await fetch(url)
@@ -25,3 +28,9 @@ export const getRequestsFromURL = (url:string, category:string) => {
 export const trimString = (max:number, str:string) => {
     return str.length > max ? `${str.substring(0, max-3)}...` : str
 }
+
+export const fetchers = (urls: string[]) => {
+    const f = (url: string) => fetch(url).then(r => r.json())
+    return Promise.all(urls.map((url: string) => f(url)))
+}
+
