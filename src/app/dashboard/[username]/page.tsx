@@ -12,6 +12,7 @@ import { ArtistFreqHistogram } from "@components/ArtistFreqHistogram/page"
 const Dashboard = ({params} : {params: {username: string}}) => {
     const [currentTimeframe, setCurrentTimeframe] = useState<string>("7day")
     const [isNowPlaying, setIsNowPLaying] = useState<boolean>(false)
+    const [currentFreqArtist, setCurrentFreqArtist] = useState<string>("Tool")
 
     const [recentTrack, setRecentTrack] = useState<track>(({
         album: "",
@@ -149,11 +150,21 @@ const Dashboard = ({params} : {params: {username: string}}) => {
                             </div>
                         </div>
                         <div className='col-span-1 flex items-center justify-center text-white ml-12 mr-12'>
-                            <ArtistFreqHistogram username={username} artist={'Ghost Data'} />
+                        <div className='border-solid border-2 rounded-lg p-6'>
+                                <div className='flex items-center justify-center mb-2 text-xs'> 
+                                    <div>
+                                        <button onClick={() => setCurrentTimeframe('7day')} className={getTimeframeButtonStyle('7day') + ' rounded-l-md'}>Week</button>
+                                        <button onClick={() => setCurrentTimeframe('1month')} className={getTimeframeButtonStyle('1month')}>Month</button>
+                                        <button onClick={() => setCurrentTimeframe('12month')} className={getTimeframeButtonStyle('12month')}>Year</button>
+                                        <button onClick={() => setCurrentTimeframe('overall')} className={getTimeframeButtonStyle('overall') + ' rounded-r-md'}>Overall</button>
+                                    </div>
+                                </div>
+                                <span className='flex items-center justify-center '> Scrobble Frequency - {currentFreqArtist}</span>
+                                <ArtistFreqHistogram username={username} artist={currentFreqArtist} />
+                            </div>
                         </div>  
                     </div>
                 </div>
-                
             </div>
         )
     }

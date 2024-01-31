@@ -1,3 +1,4 @@
+import { LineChart } from "@components/LineChart/page"
 import { fetchers } from "Utils"
 import { useEffect } from "react"
 import useSWR from "swr"
@@ -49,10 +50,16 @@ export const ArtistFreqData = ({timeframes, count, username, artist} : ArtistDat
             densityData.push(plays)
         }
         densityData.reverse()
-        console.log(densityData)
+        //console.log(densityData)
 
         return (
-            <></>
+            <>
+                <LineChart 
+                    width={800}
+                    height={288}
+                    data={densityData}
+                />
+            </>
         )
     }
 }

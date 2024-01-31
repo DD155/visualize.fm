@@ -1,5 +1,5 @@
 import { ArtistFreqData } from "@components/ArtistFreqData/page"
-import { DensityChart } from "@components/DensityChart/page"
+import { LineChart } from "@components/LineChart/page"
 import { fetcher } from "Utils"
 import { useEffect, useState } from "react"
 import useSWR from "swr"
@@ -10,7 +10,7 @@ interface ArtistHistogramProps {
 }
 
 export const ArtistFreqHistogram = ({username, artist} : ArtistHistogramProps) => {
-    const COUNT = 4
+    const COUNT = 52
 
     const { data: userInfoData, error, isLoading } = useSWR(`/api/users/getWeeklyChartList/${username}`, fetcher, {
         onErrorRetry: (err) => {
@@ -27,8 +27,6 @@ export const ArtistFreqHistogram = ({username, artist} : ArtistHistogramProps) =
                 <ArtistFreqData 
                     username={username} 
                     artist={artist} 
-                    //to={x.to} 
-                    //from={x.from}
                     timeframes={charts} 
                     count={COUNT}/>
             </div>

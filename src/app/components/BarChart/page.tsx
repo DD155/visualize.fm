@@ -90,7 +90,6 @@ export const BarChart = ({ data, width, height }: BarChartProps) => {
                 onMouseOver={() => {
                     setHoveredPlays(playcount)
                     setIsHovered(true)
-                    //console.log(name, playcount)
                 }}
                 onMouseMove={(e) => {
                     setMouseLocation({
