@@ -1,5 +1,5 @@
 import * as d3 from 'd3'
-import { ScaleLinear, axisBottom, pointer, select } from 'd3';
+import { ScaleBand, ScaleLinear, ScaleTime, axisBottom, axisLeft, pointer, select } from 'd3';
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 interface DesnityChartProps {
@@ -14,9 +14,14 @@ interface MouseData {
 }
 
 interface AxisBottomProps {
-    scale: ScaleLinear<number, number, never>
+    scale: ScaleTime<number, number, never>
     transform: string
 }  
+
+interface AxisLeftProps {
+    scale: ScaleLinear<number, number, never>
+}
+
 
 /* X axis */
 const AxisBottom = ({ scale, transform }: AxisBottomProps) => {
@@ -31,21 +36,55 @@ const AxisBottom = ({ scale, transform }: AxisBottomProps) => {
     return <g ref={ref} transform={transform} />
 }
 
+/* Y Axis */
+const AxisLeft = ({ scale }: AxisLeftProps) => {
+    const ref = useRef<SVGGElement>(null)
+  
+    useEffect(() => {
+      if (ref.current) {
+        select(ref.current).style("font-size", "12px").call(axisLeft(scale))
+      }
+    }, [scale])
+  
+    return <g ref={ref}  />
+}
+
 const getTransformedDataArr = (data:number[]):[number, number][] => {
     let transformedArr:[number, number][] = []
-
     let index = 0
     let sum = 0
-    for (let i = 0; i < data.length; i++) {
+    for (let i = 0; i <= data.length; i++) {
         sum += data[i]
         if (((i+1) % 4) == 0) {
-            transformedArr.push([index++, sum])
+            index++
+            console.log(index, getDateBeforeWeeks(index*4), getDateBeforeWeeks(index*4).getTime())
+            transformedArr.push([getDateBeforeWeeks(index*4).getTime(), sum])
             sum = 0
+            
         }
     }
     return transformedArr
 }
 
+const getDateBeforeWeeks = (weeks:number):Date => {
+    return new Date((new Date()) // endDate is 52*7 days before current date
+    .setDate(
+        new Date()
+        .getDate() - (weeks*7))
+    ) 
+}
+
+const getTimeseries = ():Date[] => {
+    const now = new Date()
+    const endDate = new Date((new Date()) // endDate is 52*7 days before current date
+        .setDate(
+            new Date()
+            .getDate() - (52*7))
+        ) 
+
+    return [now, endDate]
+}
+ 
 export const LineChart = ({width, height, data}: DesnityChartProps) => {
     /* For tooltip */ 
     const [isHovered, setIsHovered] = useState<boolean>(false)
@@ -61,17 +100,28 @@ export const LineChart = ({width, height, data}: DesnityChartProps) => {
 
     const density:[number, number][] = getTransformedDataArr(data)
 
-    const xScale = useMemo(() => {
-        return d3
-            .scaleLinear()
-            .domain([0, 13]) // note: limiting to 1000 instead of max here because of extreme values in the dataset
-            .range([10, width - 10]);
-    }, [data, width]);
+    // const xScale = useMemo(() => {
+    //     return d3
+    //         .scaleLinear()
+    //         .domain([0, 13]) 
+    //         .range([10, width - 10]);
+    // }, [data, width]);
 
+    console.log(density[density.length-1][0])
+
+    const xScale = d3.scaleTime()
+        .domain([density[0][0], getDateBeforeWeeks(52.5)])
+        .range([0, width - MARGIN.left - MARGIN.right])
+    
+    console.log(xScale.ticks(13))
+    
+    //xScale.ticks(12).map(xScale.tickFormat(d3.timeFormat("%B"))
+    
+    
     const yScale = useMemo(() => {
         const max = Math.max(...density.map((d) => d[1]));
         return d3.scaleLinear().range([height, 10]).domain([0, max]);
-    }, [data, height]);
+    }, [data, height])
 
     const path = useMemo(() => {
         const lineGenerator = d3
@@ -126,6 +176,7 @@ export const LineChart = ({width, height, data}: DesnityChartProps) => {
                     transform={`translate(${[MARGIN.left, MARGIN.top].join(",")})`}
                 >
                     <AxisBottom scale={xScale} transform={`translate(0, ${height})`} /> 
+                    <AxisLeft scale={yScale} /> 
                     <path
                         d={path}
                         opacity={0.6}

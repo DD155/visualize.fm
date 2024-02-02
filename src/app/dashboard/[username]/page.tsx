@@ -12,7 +12,7 @@ import { ArtistFreqHistogram } from "@components/ArtistFreqHistogram/page"
 const Dashboard = ({params} : {params: {username: string}}) => {
     const [currentTimeframe, setCurrentTimeframe] = useState<string>("7day")
     const [isNowPlaying, setIsNowPLaying] = useState<boolean>(false)
-    const [currentFreqArtist, setCurrentFreqArtist] = useState<string>("Tool")
+    const [currentFreqArtist, setCurrentFreqArtist] = useState<string>("")
 
     const [recentTrack, setRecentTrack] = useState<track>(({
         album: "",
@@ -43,6 +43,13 @@ const Dashboard = ({params} : {params: {username: string}}) => {
         }
     })
 
+    const { data: userArtistData, error: userArtistError, isLoading: userArtistLoading } = useSWR(`/api/users/gettopartists/${username}/overall`, fetcher, {
+        onErrorRetry: (err) => {
+            if (err.status === 500) 
+                return
+        }
+    })
+
     const getTimeframeButtonStyle = (timeframe:string) => {
         return currentTimeframe === timeframe 
             ? 'p-1 border-solid border-2 text-black bg-white'  
@@ -50,8 +57,6 @@ const Dashboard = ({params} : {params: {username: string}}) => {
     } 
 
     useEffect(() => {
-        console.log(userInfoData, error)
-        console.log(userTrackData)
         if(userInfoData) {
             setUserInfo({
                 username: userInfoData.user.name, 
@@ -71,9 +76,14 @@ const Dashboard = ({params} : {params: {username: string}}) => {
             })
             track['@attr'] && setIsNowPLaying(track['@attr'].nowplaying)
         }
-    }, [userInfoData, userTrackData])
 
-    if (isLoading || userTrackLoading) {
+        if (userArtistData) {
+            setCurrentFreqArtist(userArtistData.topartists.artist[0].name)
+        }
+
+    }, [userInfoData, userTrackData, userArtistData])
+
+    if (error || userTrackError || userArtistError) {
         return (
             <div className='h-screen flex justify-center items-center'>
                 <p className='animate-text bg-gradient-to-r from-white via-red-200 to-main-red bg-clip-text text-transparent  text-4xl'> Visualizing your music... </p>
@@ -85,7 +95,22 @@ const Dashboard = ({params} : {params: {username: string}}) => {
         )    
     }
 
-    if (!isLoading && !userTrackLoading) {
+    if (isLoading || userTrackLoading || userArtistLoading) {
+        return (
+            <div className='h-screen flex justify-center items-center'>
+                <p className='animate-text bg-gradient-to-r from-white via-red-200 to-main-red bg-clip-text text-transparent  text-4xl'> Visualizing your music... </p>
+                <svg className="animate-spin ml-3 mr-3 h-8 w-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            </div>
+        )    
+    }
+
+    if (!isLoading && !userTrackLoading && !userArtistLoading) {
+        console.log(userArtistData)
+        const topArtistsArr = userArtistData.topartists.artist
+
         const defaultProfilePic = "/empty_profile.webp"
         const defaultSongPic = "/empty_song.webp"
         const artistURL = recentTrack.url.substring(0, recentTrack.url.lastIndexOf("/") - 1)
@@ -151,12 +176,11 @@ const Dashboard = ({params} : {params: {username: string}}) => {
                         </div>
                         <div className='col-span-1 flex items-center justify-center text-white ml-12 mr-12'>
                         <div className='border-solid border-2 rounded-lg p-6'>
-                                <div className='flex items-center justify-center mb-2 text-xs'> 
-                                    <div>
-                                        <button onClick={() => setCurrentTimeframe('7day')} className={getTimeframeButtonStyle('7day') + ' rounded-l-md'}>Week</button>
-                                        <button onClick={() => setCurrentTimeframe('1month')} className={getTimeframeButtonStyle('1month')}>Month</button>
-                                        <button onClick={() => setCurrentTimeframe('12month')} className={getTimeframeButtonStyle('12month')}>Year</button>
-                                        <button onClick={() => setCurrentTimeframe('overall')} className={getTimeframeButtonStyle('overall') + ' rounded-r-md'}>Overall</button>
+                                <div className='flex items-center justify-center mb-2 text-sm'> 
+                                    <div className="text-black">
+                                        <select onChange={(e) => setCurrentFreqArtist(e.target.value)}>
+                                            {topArtistsArr.map((x:any) => <option key={x.name} value={x.name}>{x.name} </option>)}
+                                        </select>
                                     </div>
                                 </div>
                                 <span className='flex items-center justify-center '> Scrobble Frequency - {currentFreqArtist}</span>
