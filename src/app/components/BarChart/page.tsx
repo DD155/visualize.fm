@@ -71,7 +71,7 @@ export const BarChart = ({ data, width, height }: BarChartProps) => {
 
     // create Y axis, this uses scaleLinear for linear spacing of steps from 0 to max plays
     const scaleY = scaleBand()
-        .domain(data.map(({ name }) => (name)))
+        .domain(data.map(({ name }) => (trimString(20, name))))
         .range([0, chartHeight])
         .padding(0.5);
     
@@ -83,7 +83,7 @@ export const BarChart = ({ data, width, height }: BarChartProps) => {
             <rect
                 key={`bar-${name}`}
                 x={0}
-                y={scaleY(name)}
+                y={scaleY(trimString(20, name))}
                 width={ scaleX(playcount) }
                 height={scaleY.bandwidth()}
                 fill="#d51007"

@@ -34,9 +34,7 @@ export const ArtistFreqData = ({timeframes, count, username, artist} : ArtistDat
     const { data, isError, isLoading } = useMultipleRequests(generateURLS(count))
 
     if (!isLoading && data) {
-        // Once the chart is created, this will return a data point to be used
-        console.log(data) 
-
+        // Parse data to be used in LineChart 
         let densityData:number[] = []
         for (let i = 0; i < data.length; i++) {
             const currentData = data[i].weeklyartistchart.artist
@@ -50,7 +48,6 @@ export const ArtistFreqData = ({timeframes, count, username, artist} : ArtistDat
             densityData.push(plays)
         }
         densityData.reverse()
-        //console.log(densityData)
 
         return (
             <>

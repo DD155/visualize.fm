@@ -178,13 +178,13 @@ const Dashboard = ({params} : {params: {username: string}}) => {
                         <div className='border-solid border-2 rounded-lg p-6'>
                                 <div className='flex items-center justify-center mb-2 text-sm'> 
                                     <div className="text-black">
-                                        <select onChange={(e) => setCurrentFreqArtist(e.target.value)}>
+                                        <select className='p-1' onChange={(e) => setCurrentFreqArtist(e.target.value)}>
                                             {topArtistsArr.map((x:any) => <option key={x.name} value={x.name}>{x.name} </option>)}
                                         </select>
                                     </div>
                                 </div>
-                                <span className='flex items-center justify-center '> Scrobble Frequency - {currentFreqArtist}</span>
-                                <ArtistFreqHistogram username={username} artist={currentFreqArtist} />
+                                <span className='flex items-center justify-center '> Scrobble Frequency (Year) - {currentFreqArtist}</span>
+                                <ArtistFreqHistogram width={800} height={288} username={username} artist={currentFreqArtist} />
                             </div>
                         </div>  
                     </div>

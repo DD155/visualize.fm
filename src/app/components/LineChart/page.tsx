@@ -1,5 +1,5 @@
 import * as d3 from 'd3'
-import { ScaleBand, ScaleLinear, ScaleTime, axisBottom, axisLeft, pointer, select } from 'd3';
+import { ScaleLinear, ScaleTime, axisBottom, axisLeft, pointer, select } from 'd3';
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 interface DesnityChartProps {
@@ -56,11 +56,8 @@ const getTransformedDataArr = (data:number[]):[number, number][] => {
     for (let i = 0; i <= data.length; i++) {
         sum += data[i]
         if (((i+1) % 4) == 0) {
-            index++
-            console.log(index, getDateBeforeWeeks(index*4), getDateBeforeWeeks(index*4).getTime())
-            transformedArr.push([getDateBeforeWeeks(index*4).getTime(), sum])
+            transformedArr.push([getDateBeforeWeeks(++index*4).getTime(), sum])
             sum = 0
-            
         }
     }
     return transformedArr
@@ -73,21 +70,11 @@ const getDateBeforeWeeks = (weeks:number):Date => {
         .getDate() - (weeks*7))
     ) 
 }
-
-const getTimeseries = ():Date[] => {
-    const now = new Date()
-    const endDate = new Date((new Date()) // endDate is 52*7 days before current date
-        .setDate(
-            new Date()
-            .getDate() - (52*7))
-        ) 
-
-    return [now, endDate]
-}
  
 export const LineChart = ({width, height, data}: DesnityChartProps) => {
     /* For tooltip */ 
     const [isHovered, setIsHovered] = useState<boolean>(false)
+    const [hoveredTime, setHoveredTime] = useState<Date[]>([]) // contains the previous and current times when data point is hovered
     const [hoveredPlays, setHoveredPlays] = useState<number>(0)
     const [mouseLocation, setMouseLocation] = useState<MouseData>({
         x: 0,
@@ -99,24 +86,9 @@ export const LineChart = ({width, height, data}: DesnityChartProps) => {
     const boundsHeight = height - MARGIN.top - MARGIN.bottom;
 
     const density:[number, number][] = getTransformedDataArr(data)
-
-    // const xScale = useMemo(() => {
-    //     return d3
-    //         .scaleLinear()
-    //         .domain([0, 13]) 
-    //         .range([10, width - 10]);
-    // }, [data, width]);
-
-    console.log(density[density.length-1][0])
-
     const xScale = d3.scaleTime()
         .domain([density[0][0], getDateBeforeWeeks(52.5)])
-        .range([0, width - MARGIN.left - MARGIN.right])
-    
-    console.log(xScale.ticks(13))
-    
-    //xScale.ticks(12).map(xScale.tickFormat(d3.timeFormat("%B"))
-    
+        .range([0, width - MARGIN.left - MARGIN.right])    
     
     const yScale = useMemo(() => {
         const max = Math.max(...density.map((d) => d[1]));
@@ -130,7 +102,7 @@ export const LineChart = ({width, height, data}: DesnityChartProps) => {
           .y((d) => yScale(d[1]))
         return lineGenerator(density);
     }, [density]) as string;
-
+    
     const allCircles = density.map((item, i) => {
         return (
           <circle
@@ -140,6 +112,10 @@ export const LineChart = ({width, height, data}: DesnityChartProps) => {
             r={4}
             fill={'red'}
             onMouseOver={() => {
+                // If first index, set current date to previous date
+                (i === 0) ? setHoveredTime([new Date(), new Date(density[i][0])]) 
+                    : setHoveredTime([new Date(density[i-1][0]), new Date(density[i][0])])
+                
                 setHoveredPlays(item[1])
                 setIsHovered(true)
             }}
@@ -165,7 +141,15 @@ export const LineChart = ({width, height, data}: DesnityChartProps) => {
         <div>
             { isHovered &&
             <div className='absolute bg-white text-black p-1 text-xs border border-solid border-black rounded-tr-sm' style={hoverPositionStyle}>
+                <span className='font-bold'>
+                    {   
+                        `\n${hoveredTime[0].toDateString().slice(4)} - ` + 
+                        `${hoveredTime[1].toDateString().slice(4)}`
+                    }
+                </span>
+                <br/>
                 Scrobbles: {hoveredPlays} 
+                
             </div>
             }
             
