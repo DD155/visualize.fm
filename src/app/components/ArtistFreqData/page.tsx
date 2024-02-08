@@ -1,6 +1,5 @@
 import { LineChart } from "@components/LineChart/page"
 import { fetchers } from "Utils"
-import { useEffect } from "react"
 import useSWR from "swr"
 
 

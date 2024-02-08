@@ -4,7 +4,7 @@ import useSWR from "swr"
 import Image from 'next/image'
 import { useEffect, useState } from "react"
 
-import { fetcher, trimString } from "Utils"
+import { fetchers, trimString } from "Utils"
 import { track, userInfo } from 'types/userTypes'
 import { ArtistsArea } from "@components/ArtistsArea/page"
 import { ArtistFreqHistogram } from "@components/ArtistFreqHistogram/page"
@@ -29,26 +29,22 @@ const Dashboard = ({params} : {params: {username: string}}) => {
     })
     
     const username:string = params.username ? params.username : ""
-    const { data: userInfoData, error, isLoading } = useSWR(`/api/users/getInfo/${username}`, fetcher, {
-        onErrorRetry: (err) => {
-            if (err.status === 500) 
-                return
-        }
-    })
 
-    const { data: userTrackData, error: userTrackError, isLoading: userTrackLoading } = useSWR(`/api/users/getrecenttracks/${username}`, fetcher, {
-        onErrorRetry: (err) => {
-            if (err.status === 500) 
-                return
+    const useMultipleRequests = (urls: string[]) =>  {
+        const { data, error } = useSWR(urls, fetchers)
+        return {
+          data: data,
+          isError: !!error,
+          isLoading: !data && !error
         }
-    })
+    }
 
-    const { data: userArtistData, error: userArtistError, isLoading: userArtistLoading } = useSWR(`/api/users/gettopartists/${username}/overall`, fetcher, {
-        onErrorRetry: (err) => {
-            if (err.status === 500) 
-                return
-        }
-    })
+    const urls:string[] = [
+        `/api/users/getInfo/${username}`,
+        `/api/users/getrecenttracks/${username}`,
+        `/api/users/gettopartists/${username}/overall`
+    ]
+    const { data, isError, isLoading: multiLoading } = useMultipleRequests(urls)
 
     const getTimeframeButtonStyle = (timeframe:string) => {
         return currentTimeframe === timeframe 
@@ -57,16 +53,14 @@ const Dashboard = ({params} : {params: {username: string}}) => {
     } 
 
     useEffect(() => {
-        if(userInfoData) {
+        if(data) {
             setUserInfo({
-                username: userInfoData.user.name, 
-                numArtists: userInfoData.user.artist_count,
-                profilePic: userInfoData.user.image[3]['#text']
+                username: data[0].user.name, 
+                numArtists: data[0].user.artist_count,
+                profilePic: data[0].user.image[3]['#text']
             })
-        }
 
-        if (userTrackData) {
-            const track = userTrackData.recenttracks.track[0]
+            const track = data[1].recenttracks.track[0]
             setRecentTrack({
                 album: track.album["#text"],
                 artist: track.artist['#text'],
@@ -75,15 +69,12 @@ const Dashboard = ({params} : {params: {username: string}}) => {
                 image: track.image[3]['#text']
             })
             track['@attr'] && setIsNowPLaying(track['@attr'].nowplaying)
+
+            setCurrentFreqArtist(data[2].topartists.artist[0].name)
         }
+    }, [data])
 
-        if (userArtistData) {
-            setCurrentFreqArtist(userArtistData.topartists.artist[0].name)
-        }
-
-    }, [userInfoData, userTrackData, userArtistData])
-
-    if (error || userTrackError || userArtistError) {
+    if (isError) {
         return (
             <div className='h-screen flex justify-center items-center'>
                 <p className='animate-text bg-gradient-to-r from-white via-red-200 to-main-red bg-clip-text text-transparent  text-4xl'> Visualizing your music... </p>
@@ -95,7 +86,7 @@ const Dashboard = ({params} : {params: {username: string}}) => {
         )    
     }
 
-    if (isLoading || userTrackLoading || userArtistLoading) {
+    if (multiLoading) {
         return (
             <div className='h-screen flex justify-center items-center'>
                 <p className='animate-text bg-gradient-to-r from-white via-red-200 to-main-red bg-clip-text text-transparent  text-4xl'> Visualizing your music... </p>
@@ -107,9 +98,8 @@ const Dashboard = ({params} : {params: {username: string}}) => {
         )    
     }
 
-    if (!isLoading && !userTrackLoading && !userArtistLoading) {
-        console.log(userArtistData)
-        const topArtistsArr = userArtistData.topartists.artist
+    if (!multiLoading && data) {
+        const topArtistsArr = data[2].topartists.artist
 
         const defaultProfilePic = "/empty_profile.webp"
         const defaultSongPic = "/empty_song.webp"
@@ -161,8 +151,9 @@ const Dashboard = ({params} : {params: {username: string}}) => {
                     <div className='grid gap-5 grid-cols-1 justify center m-auto'> 
                         <div className='col-span-1 flex items-center justify-center text-white ml-12 mr-12'> 
                             {/* Timeframe Selection */}
-                            <div className='border-solid border-2 rounded-lg p-6'>
-                                <div className='flex items-center justify-center mb-2 text-xs'> 
+                            <div className='border-solid border-2 rounded-lg p-5'>
+                                <span className='flex items-center justify-center mb-3'> Top Artists </span>
+                                <div className='flex items-center justify-center text-xs'> 
                                     <div>
                                         <button onClick={() => setCurrentTimeframe('7day')} className={getTimeframeButtonStyle('7day') + ' rounded-l-md'}>Week</button>
                                         <button onClick={() => setCurrentTimeframe('1month')} className={getTimeframeButtonStyle('1month')}>Month</button>
@@ -170,20 +161,19 @@ const Dashboard = ({params} : {params: {username: string}}) => {
                                         <button onClick={() => setCurrentTimeframe('overall')} className={getTimeframeButtonStyle('overall') + ' rounded-r-md'}>Overall</button>
                                     </div>
                                 </div>
-                                <span className='flex items-center justify-center '> Top Artists </span>
                                 <ArtistsArea width={800} height={288} username={username} timeframe={currentTimeframe}/> 
                             </div>
                         </div>
                         <div className='col-span-1 flex items-center justify-center text-white ml-12 mr-12'>
-                        <div className='border-solid border-2 rounded-lg p-6'>
-                                <div className='flex items-center justify-center mb-2 text-sm'> 
-                                    <div className="text-black">
-                                        <select className='p-1' onChange={(e) => setCurrentFreqArtist(e.target.value)}>
-                                            {topArtistsArr.map((x:any) => <option key={x.name} value={x.name}>{x.name} </option>)}
-                                        </select>
+                            <div className='border-solid border-2 rounded-lg p-5'>
+                                <span className='flex items-center justify-center mb-3'> Scrobble Frequency (Year) - {currentFreqArtist}</span>
+                                    <div className='flex items-center justify-center text-sm '> 
+                                        <div className="text-black">
+                                            <select className='p-1' onChange={(e) => setCurrentFreqArtist(e.target.value)}>
+                                                {topArtistsArr.map((x:any) => <option key={x.name} value={x.name}>{x.name} </option>)}
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
-                                <span className='flex items-center justify-center '> Scrobble Frequency (Year) - {currentFreqArtist}</span>
                                 <ArtistFreqHistogram width={800} height={288} username={username} artist={currentFreqArtist} />
                             </div>
                         </div>  

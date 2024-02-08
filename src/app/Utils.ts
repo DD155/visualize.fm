@@ -1,6 +1,3 @@
-
-import useSWR from "swr"
-
 // Fetcher function to be used with SWR calls
 export const fetcher = async (url: string) => {
     const res = await fetch(url)
