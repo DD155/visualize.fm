@@ -1,6 +1,7 @@
+import { animated, useSpring } from '@react-spring/web'
 import * as d3 from 'd3'
-import { ScaleLinear, ScaleTime, axisBottom, axisLeft, pointer, select } from 'd3';
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { ScaleLinear, ScaleTime, axisBottom, axisLeft, pointer, select } from 'd3'
+import { MouseEventHandler, useEffect, useMemo, useRef, useState } from 'react'
 
 interface DesnityChartProps {
     width: number,
@@ -22,6 +23,19 @@ interface AxisLeftProps {
     scale: ScaleLinear<number, number, never>
 }
 
+interface LineItemProps {
+    path: string
+    color: string
+}
+
+interface CircleItemProps {
+    color: string
+    x: number
+    y: number
+    mouseOverFunc: MouseEventHandler
+    mouseMoveFunc: MouseEventHandler
+    mouseOutFunc: MouseEventHandler
+}
 
 /* X axis */
 const AxisBottom = ({ scale, transform }: AxisBottomProps) => {
@@ -47,6 +61,55 @@ const AxisLeft = ({ scale }: AxisLeftProps) => {
     }, [scale])
   
     return <g ref={ref}  />
+}
+
+
+/* Line Component using React Spring for Transitions */
+const LineItem = ({ path, color }: LineItemProps) => {
+    const springProps = useSpring({
+      to: {
+        path,
+        color,
+      },
+      config: {
+        friction: 75,
+      },
+    })
+  
+    return (
+      <animated.path
+        d={springProps.path}
+        fill={"none"}
+        stroke={color}
+        strokeWidth={2}
+      />
+    )
+}
+
+/* Circle Component using React Spring for Transitions */
+const MarkerItem = ({ x, y, mouseMoveFunc, mouseOutFunc, mouseOverFunc, color }: CircleItemProps) => {
+    const springProps = useSpring({
+      to: {
+        x,
+        y,
+        color,
+      },
+      config: {
+        friction: 75,
+      },
+    })
+  
+    return (
+      <animated.circle
+        cx={springProps.x}
+        cy={springProps.y}
+        r={4}
+        fill={'red'}
+        onMouseOver={mouseOverFunc}
+        onMouseMove={mouseMoveFunc}
+        onMouseOut={mouseOutFunc}
+      />
+    )
 }
 
 const getTransformedDataArr = (data:number[]):[number, number][] => {
@@ -105,30 +168,29 @@ export const LineChart = ({width, height, data}: DesnityChartProps) => {
     
     const allCircles = density.map((item, i) => {
         return (
-          <circle
-            key={i}
-            cx={xScale(item[0])}
-            cy={yScale(item[1])}
-            r={4}
-            fill={'red'}
-            onMouseOver={() => {
-                // If first index, set current date to previous date
-                (i === 0) ? setHoveredTime([new Date(), new Date(density[i][0])]) 
-                    : setHoveredTime([new Date(density[i-1][0]), new Date(density[i][0])])
-                
-                setHoveredPlays(item[1])
-                setIsHovered(true)
-            }}
-            onMouseMove={(e) => {
-                setMouseLocation({
-                    x: pointer(e)[0],
-                    y: pointer(e)[1]
-                })
-            }}
-            onMouseOut={() => {
-                setIsHovered(false)
-            }}
-          />
+            <MarkerItem 
+                key={i} 
+                x={xScale(item[0])} 
+                y={yScale(item[1])} 
+                color={'red'} 
+                mouseOverFunc={() => {
+                    // If first index, set current date to previous date
+                    (i === 0) ? setHoveredTime([new Date(), new Date(density[i][0])]) 
+                        : setHoveredTime([new Date(density[i-1][0]), new Date(density[i][0])])
+                    
+                    setHoveredPlays(item[1])
+                    setIsHovered(true)
+                }}
+                mouseOutFunc={() => {
+                    setIsHovered(false)
+                }}
+                mouseMoveFunc={(e) => {
+                    setMouseLocation({
+                        x: pointer(e)[0],
+                        y: pointer(e)[1]
+                    })
+                }}
+            />
         );
     });
 
@@ -161,13 +223,7 @@ export const LineChart = ({width, height, data}: DesnityChartProps) => {
                 >
                     <AxisBottom scale={xScale} transform={`translate(0, ${height})`} /> 
                     <AxisLeft scale={yScale} /> 
-                    <path
-                        d={path}
-                        opacity={0.6}
-                        stroke="red"
-                        fill="none"
-                        strokeWidth={2}
-                    />
+                    <LineItem path={path} color={'red'} />
                     {allCircles}
                 </g>
             </svg>
