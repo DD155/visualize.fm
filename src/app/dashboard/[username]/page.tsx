@@ -105,8 +105,8 @@ const Dashboard = ({params} : {params: {username: string}}) => {
                 { /* Profile Header */}
                 <div className='p-2 row-span-1 border-solid border-2'>
                     <div className='grid h-full gap-4 grid-cols-12'> 
-                        <div className='col-start-2 col-end-4 border-solid border-2 flex justify-end'>
-                            <div className='h-full w-1/2 relative'>
+                        <div className='col-start-3 col-end-4 border-solid border-2 flex justify-end'>
+                            <div className='h-full w-full relative'>
                                 <Image
                                     src={userInfo.profilePic ? userInfo.profilePic : defaultProfilePic}
                                     alt='Profile Picture'
