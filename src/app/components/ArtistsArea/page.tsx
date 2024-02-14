@@ -1,23 +1,51 @@
 import { BarChart } from "@components/BarChart/page"
-import { fetcher } from "Utils" 
+import { fetchers } from "Utils" 
+import { useState } from "react"
 import useSWR from "swr"
 
 interface ArtistsAreaProps {
     username: string,
-    timeframe: string
     height: number,
     width: number
 }
 
-export const ArtistsArea = ({username, timeframe, height, width} : ArtistsAreaProps) => {
-    // const [artistInfo, setArtistInfo] = useState<ArtistData[]>([])
+interface TimeframeIndex {
+    [key: string]: number
+}
 
-    const { data: artistData, error, isLoading } = useSWR(`/api/users/getTopArtists/${username}/period=${timeframe}`, fetcher, {
-        onErrorRetry: (err) => {
-            if (err.status === 500) 
-                return
+export const ArtistsArea = ({username, height, width} : ArtistsAreaProps) => {
+    const [currentTimeframe, setCurrentTimeframe] = useState<string>("7day")
+    const indexFromTimeframe: TimeframeIndex = { // used to index the data array based off seleccted timeframe
+        "7day": 0,
+        "1month": 1,
+        "12month": 2,
+        "overall": 3
+    } 
+
+    const useMultipleRequests = (urls: string[]) =>  {
+        const { data, error } = useSWR(urls, fetchers)
+        return {
+          data: data,
+          isError: !!error,
+          isLoading: !data && !error
         }
-    })
+    }
+
+    const urls:string[] = [
+        `/api/users/getTopArtists/${username}/period=7day`,
+        `/api/users/getTopArtists/${username}/period=1month`,
+        `/api/users/getTopArtists/${username}/period=12month`,
+        `/api/users/getTopArtists/${username}/period=overall`,
+    ]
+
+    const { data, isError, isLoading } = useMultipleRequests(urls)
+
+    const getTimeframeButtonStyle = (timeframe:string) => {
+        return currentTimeframe === timeframe 
+            ? 'p-1 border-solid border-2 text-black bg-white'  
+            : 'p-1 border-solid border-2 text-white bg-slate-950' 
+    } 
+
 
     if (isLoading) {
         // safelisted classes
@@ -26,18 +54,36 @@ export const ArtistsArea = ({username, timeframe, height, width} : ArtistsAreaPr
 
         return (
         <div className={`${heightStyle} ${widthStyle} flex justify-center items-center`}>
-            <svg className="animate-spin ml-3 mr-3 h-8 w-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
+            <div className='border-solid border-2 rounded-lg p-5'>
+                <span className='flex items-center justify-center mb-3'> Top Artists </span>
+                <div className='flex items-center justify-center text-xs'> 
+                    <div>
+                        <button onClick={() => setCurrentTimeframe('7day')} className={getTimeframeButtonStyle('7day') + ' rounded-l-md'}>Week</button>
+                        <button onClick={() => setCurrentTimeframe('1month')} className={getTimeframeButtonStyle('1month')}>Month</button>
+                        <button onClick={() => setCurrentTimeframe('12month')} className={getTimeframeButtonStyle('12month')}>Year</button>
+                        <button onClick={() => setCurrentTimeframe('overall')} className={getTimeframeButtonStyle('overall') + ' rounded-r-md'}>Overall</button>
+                    </div>
+                </div>
+            </div>
         </div>
         )    
     }
 
-    if (!isLoading) {
-        const artistsArr = artistData.topartists.artist
+    if (!isLoading && data) {
+        const artistsArr = data[indexFromTimeframe[currentTimeframe]].topartists.artist
         return (
-            <BarChart height={height} width={width} data={artistsArr.slice(0, 10)} />
+            <div className='border-solid border-2 rounded-lg p-5'>
+                <span className='flex items-center justify-center mb-3'> Top Artists </span>
+                <div className='flex items-center justify-center text-xs'> 
+                    <div>
+                        <button onClick={() => setCurrentTimeframe('7day')} className={getTimeframeButtonStyle('7day') + ' rounded-l-md'}>Week</button>
+                        <button onClick={() => setCurrentTimeframe('1month')} className={getTimeframeButtonStyle('1month')}>Month</button>
+                        <button onClick={() => setCurrentTimeframe('12month')} className={getTimeframeButtonStyle('12month')}>Year</button>
+                        <button onClick={() => setCurrentTimeframe('overall')} className={getTimeframeButtonStyle('overall') + ' rounded-r-md'}>Overall</button>
+                    </div>
+                </div>
+                <BarChart height={height} time={currentTimeframe} width={width} data={artistsArr.slice(0, 10)} />
+            </div>
         )
         
     }

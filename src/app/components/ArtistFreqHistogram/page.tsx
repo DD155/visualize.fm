@@ -1,25 +1,30 @@
 import { ArtistFreqData } from "@components/ArtistFreqData/page"
-import { LineChart } from "@components/LineChart/page"
 import { fetcher } from "Utils"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import useSWR from "swr"
 
 interface ArtistHistogramProps {
     username: string,
-    artist: string
+    artists: [],
+    artist: string,
     width: number,
     height: number,
 }
 
-export const ArtistFreqHistogram = ({width, height, username, artist} : ArtistHistogramProps) => {
+export const ArtistFreqHistogram = ({width, height, username, artists, artist} : ArtistHistogramProps) => {
     const COUNT = 52
-
+    const [currentFreqArtist, setCurrentFreqArtist] = useState<string>(artist)
     const { data: userInfoData, error, isLoading } = useSWR(`/api/users/getWeeklyChartList/${username}`, fetcher, {
         onErrorRetry: (err) => {
             if (err.status === 500) 
                 return
         }
     })
+
+    // useEffect(() => {
+    //     if (artists)
+    //         setCurrentFreqArtist(artist)
+    // }, [])
     
 
     if (isLoading) {
@@ -37,14 +42,22 @@ export const ArtistFreqHistogram = ({width, height, username, artist} : ArtistHi
         )    
     }
 
-    if (!isLoading) {
+    if (!isLoading && artists) {
         const charts = userInfoData.weeklychartlist.chart
 
         return (
             <div>
+                <span className='flex items-center justify-center mb-3'> Scrobble Frequency (Year) - {currentFreqArtist}</span>
+                <div className='flex items-center justify-center text-sm '> 
+                    <div className="text-black">
+                        <select className='p-1' onChange={(e) => setCurrentFreqArtist(e.target.value)}>
+                            {artists.map((x:any) => <option key={x.name} value={x.name}>{x.name} </option>)}
+                        </select>
+                    </div>
+                </div>
                 <ArtistFreqData 
                     username={username} 
-                    artist={artist} 
+                    artist={currentFreqArtist} 
                     timeframes={charts} 
                     count={COUNT}/>
             </div>

@@ -10,9 +10,8 @@ import { ArtistsArea } from "@components/ArtistsArea/page"
 import { ArtistFreqHistogram } from "@components/ArtistFreqHistogram/page"
 
 const Dashboard = ({params} : {params: {username: string}}) => {
-    const [currentTimeframe, setCurrentTimeframe] = useState<string>("7day")
     const [isNowPlaying, setIsNowPLaying] = useState<boolean>(false)
-    const [currentFreqArtist, setCurrentFreqArtist] = useState<string>("")
+    const [areGraphsLoading, setAreGraphsLoading] = useState<boolean>(false)
 
     const [recentTrack, setRecentTrack] = useState<track>(({
         album: "",
@@ -44,13 +43,13 @@ const Dashboard = ({params} : {params: {username: string}}) => {
         `/api/users/getrecenttracks/${username}`,
         `/api/users/gettopartists/${username}/overall`
     ]
-    const { data, isError, isLoading: multiLoading } = useMultipleRequests(urls)
+    const { data, isError, isLoading } = useMultipleRequests(urls)
 
-    const getTimeframeButtonStyle = (timeframe:string) => {
-        return currentTimeframe === timeframe 
-            ? 'p-1 border-solid border-2 text-black bg-white'  
-            : 'p-1 border-solid border-2 text-white bg-slate-950' 
-    } 
+    // const getTimeframeButtonStyle = (timeframe:string) => {
+    //     return currentTimeframe === timeframe 
+    //         ? 'p-1 border-solid border-2 text-black bg-white'  
+    //         : 'p-1 border-solid border-2 text-white bg-slate-950' 
+    // } 
 
     useEffect(() => {
         if(data) {
@@ -69,8 +68,6 @@ const Dashboard = ({params} : {params: {username: string}}) => {
                 image: track.image[3]['#text']
             })
             track['@attr'] && setIsNowPLaying(track['@attr'].nowplaying)
-
-            setCurrentFreqArtist(data[2].topartists.artist[0].name)
         }
     }, [data])
 
@@ -86,7 +83,7 @@ const Dashboard = ({params} : {params: {username: string}}) => {
         )    
     }
 
-    if (multiLoading) {
+    if (isLoading) {
         return (
             <div className='h-screen flex justify-center items-center'>
                 <p className='animate-text bg-gradient-to-r from-white via-red-200 to-main-red bg-clip-text text-transparent  text-4xl'> Visualizing your music... </p>
@@ -98,9 +95,7 @@ const Dashboard = ({params} : {params: {username: string}}) => {
         )    
     }
 
-    if (!multiLoading && data) {
-        const topArtistsArr = data[2].topartists.artist
-
+    if (!isLoading && data) {
         const defaultProfilePic = "/empty_profile.webp"
         const defaultSongPic = "/empty_song.webp"
         const artistURL = recentTrack.url.substring(0, recentTrack.url.lastIndexOf("/") - 1)
@@ -150,31 +145,17 @@ const Dashboard = ({params} : {params: {username: string}}) => {
                 <div className='row-span-5 p-4'>
                     <div className='grid gap-5 grid-cols-1 justify center m-auto'> 
                         <div className='col-span-1 flex items-center justify-center text-white ml-12 mr-12'> 
-                            {/* Timeframe Selection */}
-                            <div className='border-solid border-2 rounded-lg p-5'>
-                                <span className='flex items-center justify-center mb-3'> Top Artists </span>
-                                <div className='flex items-center justify-center text-xs'> 
-                                    <div>
-                                        <button onClick={() => setCurrentTimeframe('7day')} className={getTimeframeButtonStyle('7day') + ' rounded-l-md'}>Week</button>
-                                        <button onClick={() => setCurrentTimeframe('1month')} className={getTimeframeButtonStyle('1month')}>Month</button>
-                                        <button onClick={() => setCurrentTimeframe('12month')} className={getTimeframeButtonStyle('12month')}>Year</button>
-                                        <button onClick={() => setCurrentTimeframe('overall')} className={getTimeframeButtonStyle('overall') + ' rounded-r-md'}>Overall</button>
-                                    </div>
-                                </div>
-                                <ArtistsArea width={800} height={288} username={username} timeframe={currentTimeframe}/> 
-                            </div>
+                            <ArtistsArea width={800} height={288} username={username}/> 
                         </div>
                         <div className='col-span-1 flex items-center justify-center text-white ml-12 mr-12'>
                             <div className='border-solid border-2 rounded-lg p-5'>
-                                <span className='flex items-center justify-center mb-3'> Scrobble Frequency (Year) - {currentFreqArtist}</span>
-                                    <div className='flex items-center justify-center text-sm '> 
-                                        <div className="text-black">
-                                            <select className='p-1' onChange={(e) => setCurrentFreqArtist(e.target.value)}>
-                                                {topArtistsArr.map((x:any) => <option key={x.name} value={x.name}>{x.name} </option>)}
-                                            </select>
-                                        </div>
-                                    </div>
-                                <ArtistFreqHistogram width={800} height={288} username={username} artist={currentFreqArtist} />
+                                <ArtistFreqHistogram 
+                                    width={800} 
+                                    height={288} 
+                                    username={username} 
+                                    artists={data[2].topartists.artist} 
+                                    artist={data[2].topartists.artist[0].name} 
+                                />
                             </div>
                         </div>  
                     </div>

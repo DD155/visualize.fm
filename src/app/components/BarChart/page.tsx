@@ -1,11 +1,13 @@
+import { animated, useSpring } from "@react-spring/web";
 import { trimString } from "Utils";
 import {pointer, ScaleBand, ScaleLinear, axisBottom, axisLeft, scaleBand, scaleLinear, select } from "d3";
-import { useEffect, useRef, useState } from "react";
+import { MouseEventHandler, useEffect, useRef, useState } from "react";
 
 interface BarChartProps {
     data: ArtistData[]
-    height: number,
+    height: number
     width: number
+    time: string
 }
 
 interface AxisBottomProps {
@@ -22,6 +24,25 @@ interface BarsProps {
     width: number
     scaleX: AxisBottomProps["scale"]
     scaleY: AxisLeftProps["scale"]
+}
+
+interface BarItemProps {
+    color: string
+    x: number
+    y: number | undefined
+    width: number
+    height: number
+    mouseOverFunc: MouseEventHandler
+    mouseMoveFunc: MouseEventHandler
+    mouseOutFunc: MouseEventHandler
+}
+
+interface BarAnimatedProps {
+    width: number
+    x: number
+    y: number
+    opacity: number
+
 }
 
 interface MouseData {
@@ -53,7 +74,41 @@ const AxisLeft = ({ scale }: AxisLeftProps) => {
     return <g ref={ref}  />
 }
 
-export const BarChart = ({ data, width, height }: BarChartProps) => {
+const BarItem = ({ x, y, width, height, color, mouseMoveFunc, mouseOutFunc, mouseOverFunc, }: BarItemProps) => {
+    const springProps = useSpring<BarAnimatedProps>({
+        // from: {
+        //     width: 0,
+        //     opacity: 0,
+        // },
+        to: {
+            width: width,
+            y,
+            opacity: width > 1 ? 1 : 0,
+        },
+        config: {
+            //duration: 150,
+            precision: 0.1,
+            friction: 75
+            
+        },
+    })
+  
+    return (
+      <animated.rect
+        x={x}
+        y={springProps.y}
+        width={springProps.width}
+        height={height}
+        opacity={springProps.opacity}
+        fill={color}
+        onMouseOver={mouseOverFunc}
+        onMouseMove={mouseMoveFunc}
+        onMouseOut={mouseOutFunc}
+      />
+    )
+}
+
+export const BarChart = ({ time, data, width, height }: BarChartProps) => {
     const [isHovered, setIsHovered] = useState<boolean>(false)
     const [hoveredPlays, setHoveredPlays] = useState<number>(0)
     const [mouseLocation, setMouseLocation] = useState<MouseData>({
@@ -73,38 +128,35 @@ export const BarChart = ({ data, width, height }: BarChartProps) => {
     const scaleY = scaleBand()
         .domain(data.map(({ name }) => (trimString(20, name))))
         .range([0, chartHeight])
-        .padding(0.5);
+        .padding(0.5)
     
     // create Bars for each data point, using SVG Rects  
-    const Bars = ({ data, width, scaleX, scaleY }: BarsProps) => {
-        return (
-        <>
-            {data.map(({ name, playcount }) => (
-            <rect
-                key={`bar-${name}`}
-                x={0}
+    //console.log(data)
+    const Bars =  data.map(({ name, playcount }, i) => (
+            <BarItem
+                key={`bar-${i}`}
+                x={scaleX(0)}
                 y={scaleY(trimString(20, name))}
                 width={ scaleX(playcount) }
                 height={scaleY.bandwidth()}
-                fill="#d51007"
-                onMouseOver={() => {
+                color="#d51007"
+                mouseOverFunc={() => {
                     setHoveredPlays(playcount)
                     setIsHovered(true)
                 }}
-                onMouseMove={(e) => {
+                mouseMoveFunc={(e) => {
                     setMouseLocation({
                         x: pointer(e)[0],
                         y: pointer(e)[1]
                     })
                 }}
-                onMouseOut={() => {
+                mouseOutFunc={() => {
                     setIsHovered(false)
                 }}
-            />
-            ))}
-        </>
-        )
-    }
+            /> ))
+
+    console.log(Bars)
+    
 
     const hoverPositionStyle = {
         top:`${mouseLocation.y + height - 30}px`,
@@ -126,7 +178,7 @@ export const BarChart = ({ data, width, height }: BarChartProps) => {
                 <g transform={`translate(${margin.left}, ${margin.top})`}>
                     <AxisBottom scale={scaleX} transform={`translate(0, ${chartHeight})`} /> 
                     <AxisLeft scale={scaleY} />   
-                    <Bars data={data} width={chartWidth} scaleX={scaleX} scaleY={scaleY} />
+                    {Bars}
                     {/* <title> {hoveredPlays} </title> */}
                 </g>
             </svg>
