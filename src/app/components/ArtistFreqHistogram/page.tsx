@@ -21,12 +21,6 @@ export const ArtistFreqHistogram = ({width, height, username, artists, artist} :
         }
     })
 
-    // useEffect(() => {
-    //     if (artists)
-    //         setCurrentFreqArtist(artist)
-    // }, [])
-    
-
     if (isLoading) {
         // safelisted classes
         const widthStyle = `w-[${width}px]`

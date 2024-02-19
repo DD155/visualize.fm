@@ -41,8 +41,6 @@ interface BarAnimatedProps {
     width: number
     x: number
     y: number
-    opacity: number
-
 }
 
 interface MouseData {
@@ -76,20 +74,13 @@ const AxisLeft = ({ scale }: AxisLeftProps) => {
 
 const BarItem = ({ x, y, width, height, color, mouseMoveFunc, mouseOutFunc, mouseOverFunc, }: BarItemProps) => {
     const springProps = useSpring<BarAnimatedProps>({
-        // from: {
-        //     width: 0,
-        //     opacity: 0,
-        // },
         to: {
             width: width,
             y,
-            opacity: width > 1 ? 1 : 0,
         },
         config: {
-            //duration: 150,
             precision: 0.1,
-            friction: 75
-            
+            friction: 100
         },
     })
   
@@ -99,7 +90,6 @@ const BarItem = ({ x, y, width, height, color, mouseMoveFunc, mouseOutFunc, mous
         y={springProps.y}
         width={springProps.width}
         height={height}
-        opacity={springProps.opacity}
         fill={color}
         onMouseOver={mouseOverFunc}
         onMouseMove={mouseMoveFunc}
@@ -111,6 +101,7 @@ const BarItem = ({ x, y, width, height, color, mouseMoveFunc, mouseOutFunc, mous
 export const BarChart = ({ time, data, width, height }: BarChartProps) => {
     const [isHovered, setIsHovered] = useState<boolean>(false)
     const [hoveredPlays, setHoveredPlays] = useState<number>(0)
+    const [hoveredArtist, setHoveredArtist] = useState<string>("")
     const [mouseLocation, setMouseLocation] = useState<MouseData>({
         x: 0,
         y: 0
@@ -130,8 +121,7 @@ export const BarChart = ({ time, data, width, height }: BarChartProps) => {
         .range([0, chartHeight])
         .padding(0.5)
     
-    // create Bars for each data point, using SVG Rects  
-    //console.log(data)
+    // create Bars for each data point, using React-Spring animated rects  
     const Bars =  data.map(({ name, playcount }, i) => (
             <BarItem
                 key={`bar-${i}`}
@@ -139,9 +129,10 @@ export const BarChart = ({ time, data, width, height }: BarChartProps) => {
                 y={scaleY(trimString(20, name))}
                 width={ scaleX(playcount) }
                 height={scaleY.bandwidth()}
-                color="#d51007"
+                color="#d51007" 
                 mouseOverFunc={() => {
                     setHoveredPlays(playcount)
+                    setHoveredArtist(name)
                     setIsHovered(true)
                 }}
                 mouseMoveFunc={(e) => {
@@ -154,10 +145,7 @@ export const BarChart = ({ time, data, width, height }: BarChartProps) => {
                     setIsHovered(false)
                 }}
             /> ))
-
-    console.log(Bars)
     
-
     const hoverPositionStyle = {
         top:`${mouseLocation.y + height - 30}px`,
         left: `${mouseLocation.x + width - margin.left}px`
@@ -168,7 +156,6 @@ export const BarChart = ({ time, data, width, height }: BarChartProps) => {
             { isHovered &&
             <div className='absolute bg-white text-black p-1 text-xs border border-solid border-black rounded-tr-sm' style={hoverPositionStyle}>
                 Scrobbles: {hoveredPlays} 
-                {/* {mouseLocation.x} - {mouseLocation.y} */}
             </div>
             }
             <svg

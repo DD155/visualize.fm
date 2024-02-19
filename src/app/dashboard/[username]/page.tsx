@@ -45,12 +45,6 @@ const Dashboard = ({params} : {params: {username: string}}) => {
     ]
     const { data, isError, isLoading } = useMultipleRequests(urls)
 
-    // const getTimeframeButtonStyle = (timeframe:string) => {
-    //     return currentTimeframe === timeframe 
-    //         ? 'p-1 border-solid border-2 text-black bg-white'  
-    //         : 'p-1 border-solid border-2 text-white bg-slate-950' 
-    // } 
-
     useEffect(() => {
         if(data) {
             setUserInfo({
@@ -122,8 +116,12 @@ const Dashboard = ({params} : {params: {username: string}}) => {
                             <div className='h-full grid grid-cols-3'>
                                 <div className='flex justify-end col-span-2'>
                                     <div className='mr-3 h-full grid grid-rows-3'>
-                                        <span className='mt-auto ml-auto row-span-1'> {isNowPlaying ? "Currently Listening To..." : 'Last Listened To...'}  </span>
-                                        <a href={recentTrack.url} className='mt-auto ml-auto row-span-1 h-fit hover:underline font-bold text-lg text-main-red float-right'>{trimString(25, recentTrack.title)} </a> 
+                                        <span className='mt-auto ml-auto row-span-1'>
+                                            {isNowPlaying ? "Currently Listening To..." : 'Last Listened To...'}  
+                                        </span>
+                                        <a href={recentTrack.url} className='mt-auto ml-auto row-span-1 h-fit hover:underline font-bold text-lg text-main-red float-right'>
+                                            {trimString(25, recentTrack.title)} 
+                                        </a> 
                                         <a href={artistURL} className='ml-auto hover:underline text-md text-main-red'>{trimString(30, recentTrack.artist)}  </a>
                                     </div> 
                                 </div>
