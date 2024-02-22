@@ -1,5 +1,5 @@
-import { ArtistFreqData } from "@components/ArtistFreqData/page"
-import { fetcher } from "Utils"
+import { ArtistFreqData } from "./ArtistFreqData"
+import { fetcher } from "../Utils"
 import { useState } from "react"
 import useSWR from "swr"
 

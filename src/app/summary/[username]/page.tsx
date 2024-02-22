@@ -1,7 +1,7 @@
 'use client'
 
-import { ArtistsArea } from "@components/ArtistsArea/page"
-import { PageButton } from "@components/PageButton/page"
+import { ArtistsArea } from "../../../components/ArtistsArea"
+import { PageButton } from "../../../components/PageButton"
 import React from "react"
 import { ReactElement, useState } from "react"
 

@@ -1,5 +1,5 @@
-import { BarChart } from "@components/BarChart/page"
-import { fetchers } from "Utils" 
+import { BarChart } from "./Charts/BarChart"
+import { fetchers } from "../Utils" 
 import { useState } from "react"
 import useSWR from "swr"
 

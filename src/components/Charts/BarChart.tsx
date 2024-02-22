@@ -1,5 +1,5 @@
 import { animated, useSpring } from "@react-spring/web";
-import { trimString } from "Utils";
+import { trimString } from "../../Utils";
 import {pointer, ScaleBand, ScaleLinear, axisBottom, axisLeft, scaleBand, scaleLinear, select } from "d3";
 import { MouseEventHandler, useEffect, useRef, useState } from "react";
 

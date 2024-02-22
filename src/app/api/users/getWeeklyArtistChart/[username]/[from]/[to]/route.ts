@@ -1,4 +1,4 @@
-import { getRequestsFromURL } from "Utils"
+import { getRequestsFromURL } from "../../../../../../../Utils"
 import { NextResponse } from "next/server"
 
 const API_KEY = process.env.API_KEY as string

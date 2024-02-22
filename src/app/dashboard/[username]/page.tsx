@@ -4,10 +4,10 @@ import useSWR from "swr"
 import Image from 'next/image'
 import { useEffect, useState } from "react"
 
-import { fetchers, trimString } from "Utils"
-import { track, userInfo } from 'types/userTypes'
-import { ArtistsArea } from "@components/ArtistsArea/page"
-import { ArtistFreqHistogram } from "@components/ArtistFreqHistogram/page"
+import { fetchers, trimString } from "../../../Utils"
+import { track, userInfo } from '_types/userTypes'
+import { ArtistsArea } from "../../../components/ArtistsArea"
+import { ArtistFreqHistogram } from "../../../components/ArtistFreqHistogram"
 
 const Dashboard = ({params} : {params: {username: string}}) => {
     const [isNowPlaying, setIsNowPLaying] = useState<boolean>(false)

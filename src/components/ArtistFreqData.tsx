@@ -1,5 +1,5 @@
-import { LineChart } from "@components/LineChart/page"
-import { fetchers } from "Utils"
+import { LineChart } from "./Charts/LineChart"
+import { fetchers } from "../Utils"
 import useSWR from "swr"
 
 

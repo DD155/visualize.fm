@@ -3,8 +3,8 @@
 import useSWR from 'swr'
 import useSWRImmutable from 'swr/immutable'
 
-import { userInfo } from 'types/userTypes'
-import { fetcher } from "Utils" 
+import { userInfo } from '_types/userTypes'
+import { fetcher } from "../../../Utils" 
 import { useEffect, useState } from "react"
 import { useRouter } from 'next/navigation'
 
