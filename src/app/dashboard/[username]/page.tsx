@@ -2,24 +2,17 @@
 
 import useSWR from "swr"
 import Image from 'next/image'
-import { useEffect, useState } from "react"
+import { createContext, useEffect, useState } from "react"
 
 import { fetchers, trimString } from "../../../Utils"
 import { track, userInfo } from '_types/userTypes'
 import { ArtistsArea } from "../../../components/ArtistsArea"
 import { ArtistFreqHistogram } from "../../../components/ArtistFreqHistogram"
+import { NowPlaying } from "@components/NowPlaying"
+
 
 const Dashboard = ({params} : {params: {username: string}}) => {
-    const [isNowPlaying, setIsNowPLaying] = useState<boolean>(false)
     const [areGraphsLoading, setAreGraphsLoading] = useState<boolean>(false)
-
-    const [recentTrack, setRecentTrack] = useState<track>(({
-        album: "",
-        artist: "",
-        title: "",
-        url: "",
-        image: ""
-    }))
 
     const [userInfo, setUserInfo] = useState<userInfo>({
         username: "", 
@@ -40,7 +33,6 @@ const Dashboard = ({params} : {params: {username: string}}) => {
 
     const urls:string[] = [
         `/api/users/getInfo/${username}`,
-        `/api/users/getrecenttracks/${username}`,
         `/api/users/gettopartists/${username}/overall`
     ]
     const { data, isError, isLoading } = useMultipleRequests(urls)
@@ -52,16 +44,6 @@ const Dashboard = ({params} : {params: {username: string}}) => {
                 numArtists: data[0].user.artist_count,
                 profilePic: data[0].user.image[3]['#text']
             })
-
-            const track = data[1].recenttracks.track[0]
-            setRecentTrack({
-                album: track.album["#text"],
-                artist: track.artist['#text'],
-                title: track.name,
-                url: track.url,
-                image: track.image[3]['#text']
-            })
-            track['@attr'] && setIsNowPLaying(track['@attr'].nowplaying)
         }
     }, [data])
 
@@ -91,8 +73,6 @@ const Dashboard = ({params} : {params: {username: string}}) => {
 
     if (!isLoading && data) {
         const defaultProfilePic = "/empty_profile.webp"
-        const defaultSongPic = "/empty_song.webp"
-        const artistURL = recentTrack.url.substring(0, recentTrack.url.lastIndexOf("/") - 1)
 
         return (
             <div className='mt-4 grid h-screen grid-rows-6 grid-flow-col'>
@@ -113,29 +93,7 @@ const Dashboard = ({params} : {params: {username: string}}) => {
                             <p className='font-bold h-full text-white text-4xl flex items-end'> {userInfo.username}</p>
                         </div>
                         <div className='col-start-8 col-span-4 border-solid border-2 text-sm text-white'>
-                            <div className='h-full grid grid-cols-3'>
-                                <div className='flex justify-end col-span-2'>
-                                    <div className='mr-3 h-full grid grid-rows-3'>
-                                        <span className='mt-auto ml-auto row-span-1'>
-                                            {isNowPlaying ? "Currently Listening To..." : 'Last Listened To...'}  
-                                        </span>
-                                        <a href={recentTrack.url} className='mt-auto ml-auto row-span-1 h-fit hover:underline font-bold text-lg text-main-red float-right'>
-                                            {trimString(25, recentTrack.title)} 
-                                        </a> 
-                                        <a href={artistURL} className='ml-auto hover:underline text-md text-main-red'>{trimString(30, recentTrack.artist)}  </a>
-                                    </div> 
-                                </div>
-                                <div className='col-span-1'>
-                                    <div className='h-full w-2/3 relative'>
-                                        <Image
-                                            src={recentTrack.image ? recentTrack.image : defaultSongPic}
-                                            alt='Track Picture'
-                                            fill
-                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
+                            <NowPlaying username={username}/>
                         </div>
                     </div>
                 </div>
@@ -151,8 +109,8 @@ const Dashboard = ({params} : {params: {username: string}}) => {
                                     width={800} 
                                     height={288} 
                                     username={username} 
-                                    artists={data[2].topartists.artist} 
-                                    artist={data[2].topartists.artist[0].name} 
+                                    artists={data[1].topartists.artist} 
+                                    artist={data[1].topartists.artist[0].name} 
                                 />
                             </div>
                         </div>  
