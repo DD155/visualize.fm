@@ -9,6 +9,7 @@ import { track, userInfo } from '_types/userTypes'
 import { ArtistsArea } from "../../../components/ArtistsArea"
 import { ArtistFreqHistogram } from "../../../components/ArtistFreqHistogram"
 import { NowPlaying } from "@components/NowPlaying"
+import { GenreArea } from "@components/GenreArea"
 
 
 const Dashboard = ({params} : {params: {username: string}}) => {
@@ -33,7 +34,10 @@ const Dashboard = ({params} : {params: {username: string}}) => {
 
     const urls:string[] = [
         `/api/users/getInfo/${username}`,
-        `/api/users/gettopartists/${username}/overall`
+        `/api/users/getTopArtists/${username}/period=7day`,
+        `/api/users/getTopArtists/${username}/period=1month`,
+        `/api/users/getTopArtists/${username}/period=12month`,
+        `/api/users/getTopArtists/${username}/period=overall`,
     ]
     const { data, isError, isLoading } = useMultipleRequests(urls)
 
@@ -73,6 +77,13 @@ const Dashboard = ({params} : {params: {username: string}}) => {
 
     if (!isLoading && data) {
         const defaultProfilePic = "/empty_profile.webp"
+        const topArtistArrays = [
+            data[1].topartists.artist.slice(0, 10), 
+            data[2].topartists.artist.slice(0, 10), 
+            data[3].topartists.artist.slice(0, 10), 
+            data[4].topartists.artist.slice(0, 10)
+        ]
+        console.log(data)
 
         return (
             <div className='mt-4 grid h-screen grid-rows-6 grid-flow-col'>
@@ -101,7 +112,11 @@ const Dashboard = ({params} : {params: {username: string}}) => {
                 <div className='row-span-5 p-4'>
                     <div className='grid gap-5 grid-cols-1 justify center m-auto'> 
                         <div className='col-span-1 flex items-center justify-center text-white ml-12 mr-12'> 
-                            <ArtistsArea width={800} height={288} username={username}/> 
+                            <ArtistsArea 
+                            width={800} 
+                            height={288} 
+                            data={topArtistArrays}
+                            /> 
                         </div>
                         <div className='col-span-1 flex items-center justify-center text-white ml-12 mr-12'>
                             <div className='border-solid border-2 rounded-lg p-5'>
@@ -109,11 +124,14 @@ const Dashboard = ({params} : {params: {username: string}}) => {
                                     width={800} 
                                     height={288} 
                                     username={username} 
-                                    artists={data[1].topartists.artist} 
-                                    artist={data[1].topartists.artist[0].name} 
+                                    artists={data[4].topartists.artist} 
+                                    artist={data[4].topartists.artist[0].name} 
                                 />
                             </div>
-                        </div>  
+                        </div>
+                        <div className='col-span-1 flex items-center justify-center text-white ml-12 mr-12'>
+                            <GenreArea data={topArtistArrays}/>
+                        </div>
                     </div>
                 </div>
             </div>
