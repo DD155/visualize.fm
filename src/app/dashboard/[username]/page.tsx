@@ -83,7 +83,14 @@ const Dashboard = ({params} : {params: {username: string}}) => {
             data[3].topartists.artist.slice(0, 10), 
             data[4].topartists.artist.slice(0, 10)
         ]
-        console.log(data)
+
+        const topArtistArrays2 = [
+            data[1].topartists.artist.slice(0, 25), 
+            data[2].topartists.artist.slice(0, 25), 
+            data[3].topartists.artist.slice(0, 25), 
+            data[4].topartists.artist.slice(0, 25)
+        ]
+        //console.log(data)
 
         return (
             <div className='mt-4 grid h-screen grid-rows-6 grid-flow-col'>
@@ -130,7 +137,7 @@ const Dashboard = ({params} : {params: {username: string}}) => {
                             </div>
                         </div>
                         <div className='col-span-1 flex items-center justify-center text-white ml-12 mr-12'>
-                            <GenreArea data={topArtistArrays}/>
+                            <GenreArea data={topArtistArrays2}/>
                         </div>
                     </div>
                 </div>
