@@ -137,7 +137,7 @@ const Dashboard = ({params} : {params: {username: string}}) => {
                             </div>
                         </div>
                         <div className='col-span-1 flex items-center justify-center text-white ml-12 mr-12'>
-                            <GenreArea data={topArtistArrays2}/>
+                            <GenreArea width={800} height={288} data={topArtistArrays2}/>
                         </div>
                     </div>
                 </div>

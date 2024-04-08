@@ -54,7 +54,7 @@ export const ArtistsArea = ({height, width, data} : ArtistsAreaProps) => {
 
         return (
             <div className='border-solid border-2 rounded-lg p-5'>
-                <span className='flex items-center justify-center mb-3'> Top Artists </span>
+                <span className='flex items-center justify-center mb-3'>Top Artists</span>
                 <div className='flex items-center justify-center text-xs'> 
                     <div>
                         <button onClick={() => setCurrentTimeframe('7day')} className={getTimeframeButtonStyle('7day') + ' rounded-l-md'}>Week</button>
